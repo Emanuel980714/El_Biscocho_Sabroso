@@ -2,41 +2,74 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>El Biscocho Sabroso — Redirigiendo…</title>
-
-  <!-- Redirección inmediata -->
-  <meta http-equiv="refresh" content="0; url=https://emanuel980714.github.io/El_Biscocho_Sabroso/">
-
-  <!-- Fallback por si el meta-refresh no corre -->
-  <script>
-    (function () {
-      var url = "https://emanuel980714.github.io/El_Biscocho_Sabroso/";
-      if (location.href !== url) location.replace(url);
-    })();
-  </script>
-
-  <!-- Canónica (buena práctica, no afecta al WebView) -->
-  <link rel="canonical" href="https://emanuel980714.github.io/El_Biscocho_Sabroso/">
-
-  <style>
-    :root{--accent:#ff7043;}
-    html,body{height:100%}
-    body{margin:0;display:grid;place-items:center;background:#fff7f2;
-         font-family:system-ui,Segoe UI,Roboto,Arial;color:#3e2723}
-    .card{background:#fff;border:1px solid #f2d2c8;border-radius:14px;
-          padding:22px 26px;box-shadow:0 8px 24px rgba(0,0,0,.08);text-align:center}
-    h1{margin:0 0 6px 0;font-size:22px}
-    p{margin:0 0 14px 0}
-    a.btn{display:inline-block;padding:10px 14px;border-radius:10px;
-          background:var(--accent);color:#fff;text-decoration:none;font-weight:700}
-  </style>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>El Biscocho Sabroso</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="card">
+  <header class="topbar">
     <h1>🥐 El Biscocho Sabroso</h1>
-    <p>Redirigiendo a la tienda en línea…</p>
-    <a class="btn" href="https://emanuel980714.github.io/El_Biscocho_Sabroso/">Abrir ahora</a>
-  </div>
+    <nav>
+      <button id="tabCatalogo" class="tab active">Catálogo</button>
+      <button id="tabInventario" class="tab">Inventario</button>
+      <button id="tabTicket" class="tab">Ticket</button>
+    </nav>
+  </header>
+
+  <main class="content">
+    <!-- CATÁLOGO -->
+    <section id="vistaCatalogo" class="view">
+      <div class="toolbar">
+        <input id="buscador" class="input" type="search" placeholder="Buscar pan… (concha, bolillo…)" />
+        <select id="filtroCategoria" class="input"></select>
+      </div>
+      <div id="grid" class="grid"></div>
+    </section>
+
+    <!-- INVENTARIO -->
+    <section id="vistaInventario" class="view hidden">
+      <h2>📦 Inventario</h2>
+      <div class="inv-actions">
+        <button id="btnResetLocal" class="btn ghost">Revertir cambios (reset)</button>
+        <button id="btnExportJSON" class="btn ghost">Exportar productos.json</button>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="invBody"></tbody>
+      </table>
+
+      <h3>➕ Agregar producto</h3>
+      <form id="formAgregar" class="form">
+        <input name="nombre" class="input" placeholder="Nombre" required />
+        <input name="categoria" class="input" placeholder="Categoría (Dulce, Salado…)" required />
+        <input name="precio" class="input" type="number" min="0" step="0.01" placeholder="Precio" required />
+        <input name="stock" class="input" type="number" min="0" step="1" placeholder="Stock" required />
+        <input name="imagen" class="input" placeholder="Ruta imagen (opcional)" />
+        <button class="btn">Agregar</button>
+      </form>
+    </section>
+
+    <!-- TICKET -->
+    <section id="vistaTicket" class="view hidden">
+      <h2>🧾 Ticket de compra</h2>
+      <div id="ticketList"></div>
+      <div class="ticket-total">
+        <span>Total</span><strong id="ticketTotal">$0.00</strong>
+      </div>
+      <div class="ticket-actions">
+        <button id="btnClearTicket" class="btn ghost">Vaciar ticket</button>
+        <button id="btnPDF" class="btn">Generar PDF</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- jsPDF para el ticket -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-/Cw7Z0z2sYw1nD5F7E6rVw3H0pEJz6U8jvUq6mY/Gn2K3cF8m9zq3Zr0Yt3uVt9k7mC7Y7jv7vGq6wV8F7H0wQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="script.js"></script>
 </body>
 </html>
