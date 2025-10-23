@@ -1,0 +1,16 @@
+{
+  "productos": [
+    { "id": "pan001", "nombre": "Concha de Vainilla", "precio": 10, "categoria": "Dulce", "stock": 24, "unidad": "pz", "imagen": "imagenes/concha_vainilla.png" },
+    { "id": "pan002", "nombre": "Concha de Chocolate", "precio": 11, "categoria": "Dulce", "stock": 20, "unidad": "pz", "imagen": "imagenes/concha_chocolate.png" },
+    { "id": "pan003", "nombre": "Cuernito (Croissant)", "precio": 14, "categoria": "Hojaldre", "stock": 18, "unidad": "pz", "imagen": "imagenes/cuernito.png" },
+    { "id": "pan004", "nombre": "Oreja", "precio": 9, "categoria": "Hojaldre", "stock": 26, "unidad": "pz", "imagen": "imagenes/oreja.png" },
+    { "id": "pan005", "nombre": "Dona Glaseada", "precio": 12, "categoria": "Dulce", "stock": 30, "unidad": "pz", "imagen": "imagenes/dona_glaseada.png" },
+    { "id": "pan006", "nombre": "Pan de Elote", "precio": 16, "categoria": "Especialidad", "stock": 12, "unidad": "pz", "imagen": "imagenes/pan_elote.png" },
+    { "id": "pan007", "nombre": "Rebanada de Chocolate", "precio": 15, "categoria": "Pastel", "stock": 10, "unidad": "pz", "imagen": "imagenes/rebanada_chocolate.png" },
+    { "id": "pan008", "nombre": "Baguette", "precio": 17, "categoria": "Salado", "stock": 14, "unidad": "pz", "imagen": "imagenes/baguette.png" },
+    { "id": "pan009", "nombre": "Bolillo", "precio": 4, "categoria": "Salado", "stock": 60, "unidad": "pz", "imagen": "imagenes/bolillo.png" },
+    { "id": "pan010", "nombre": "Telera", "precio": 5, "categoria": "Salado", "stock": 50, "unidad": "pz", "imagen": "imagenes/telera.png" },
+    { "id": "pan011", "nombre": "Garibaldi", "precio": 13, "categoria": "Dulce", "stock": 16, "unidad": "pz", "imagen": "imagenes/garibaldi.png" },
+    { "id": "pan012", "nombre": "Roles de Canela", "precio": 18, "categoria": "Dulce", "stock": 15, "unidad": "pz", "imagen": "imagenes/rol_canela.png" }
+  ]
+}
