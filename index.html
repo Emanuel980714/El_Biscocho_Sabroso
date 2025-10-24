@@ -263,8 +263,8 @@ $('#btnPDF').onclick=()=>{
   const doc=new jsPDF({unit:'mm',format:[80,alto]});
   const fecha=new Date().toLocaleString('es-MX'); let y=8;
   doc.setFontSize(13); doc.text('El Biscocho Sabroso',40,y,{align:'center'}); y+=6;
-  doc.setFontSize(9);  doc.text('RFC: BIS010101ABC',40,y,{align:'center'}); y+=5;
-  doc.text('Calle Pan #123, Col. Centro',40,y,{align:'center'}); y+=5;
+  doc.setFontSize(9);  doc.text('RFC: BIS140798SKA',40,y,{align:'center'}); y+=5;
+  doc.text('Calle Del Pan #420, Col. De las Delicias',40,y,{align:'center'}); y+=5;
   doc.text(`Fecha: ${fecha}`,40,y,{align:'center'}); y+=5;
   doc.text('----------------------------------------',40,y,{align:'center'}); y+=5;
   doc.setFontSize(10); doc.text('Producto',4,y); doc.text('Cant',46,y); doc.text('P.U.',58,y); doc.text('Sub',72,y,{align:'right'}); y+=4;
