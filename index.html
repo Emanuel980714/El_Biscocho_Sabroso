@@ -1,75 +1,365 @@
  <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>El Biscocho Sabroso</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>El Biscocho Sabroso — Punto de Venta</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<style>
+:root{
+  --bg:#fff7f2; --panel:#fff; --ink:#3e2723; --muted:#6d4c41;
+  --primary:#ff7043; --primary2:#ff8a65; --ring:#ffe0b2;
+  --radius:14px; --shadow:0 8px 24px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;color:var(--ink);background:var(--bg)}
+.container{max-width:1200px;margin:16px auto;padding:0 16px}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #f2d2c8;border-radius:var(--radius);box-shadow:var(--shadow);padding:12px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.input,select,button{padding:10px 12px;border-radius:10px;border:1px solid #edd;outline:none}
+.input{background:#fff;min-width:220px}
+button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
+.btn{background:var(--primary);color:#fff}
+.btn.ghost{background:#fff;color:var(--primary);border:1px solid var(--primary)}
+.btn.warn{background:#f44336;color:#fff}
+.gridCards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{background:#fff;border:1px solid #f2d2c8;border-radius:var(--radius);padding:12px;display:flex;gap:8px;flex-direction:column;box-shadow:var(--shadow)}
+.card h3{margin:0}
+.meta{display:flex;justify-content:space-between;align-items:center;color:#6d4c41;font-size:13px}
+.badge{background:#ffe0b2;border:1px solid #f2c48e;border-radius:999px;padding:2px 8px}
+.price{font-weight:800}
+#ticketList{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto}
+.ticket-item{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;background:#fff;border:1px solid #f2d2c8;border-radius:10px;padding:8px}
+.ticket-item .qtyctl{display:flex;gap:6px;align-items:center}
+.ticket-total{display:flex;justify-content:space-between;background:#fff3e0;border:1px solid #f2d2c8;border-radius:10px;padding:10px;margin-top:8px}
+.muted{color:#6d4c41}.small{font-size:12px}
+
+/* Inventario ancho completo */
+#vistaInventario{grid-column:1/-1;margin-top:8px}
+.table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin:10px 0}
+.table th,.table td{padding:12px;border-bottom:1px solid #f2d2c8;text-align:left}
+.table th{background:#fff3e0}
+.inv-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.w-90{max-width:90px}
+
+/* Botón inventario en cabecera del ticket */
+.ticket-head{display:flex;justify-content:space-between;align-items:center}
+#btnOpenInv{background:#fff;color:var(--primary);border:1px solid var(--primary);border-radius:999px;padding:6px 10px;font-weight:700}
+
+/* Modal login */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:grid;place-items:center;z-index:50}
+.modal-card{background:#fff;border-radius:14px;padding:20px;min-width:290px;max-width:360px;box-shadow:var(--shadow)}
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.form.login{grid-template-columns:1fr}
+.row{display:flex;gap:10px}
+.hidden{display:none!important}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <h1>🥐 El Biscocho Sabroso</h1>
-    <nav>
-      <button id="tabCatalogo" class="tab active">Catálogo</button>
-      <button id="tabInventario" class="tab">Inventario</button>
-      <button id="tabTicket" class="tab">Ticket</button>
-    </nav>
-  </header>
+  <main class="container">
+    <div class="grid">
+      <!-- CATALOGO IZQUIERDA -->
+      <section id="vistaCatalogo" class="panel">
+        <div class="toolbar">
+          <input id="buscador" class="input" type="search" placeholder="Buscar pan… (concha, bolillo…)" />
+          <select id="filtroCategoria" class="input"></select>
+          <button id="btnVaciar" class="btn ghost">Vaciar ticket</button>
+          <button id="btnImprimir" class="btn ghost">Imprimir</button>
+          <button id="btnPDF" class="btn">Generar Ticket</button>
+        </div>
+        <div id="grid" class="gridCards"></div>
+      </section>
 
-  <main class="content">
-    <!-- CATÁLOGO -->
-    <section id="vistaCatalogo" class="view">
-      <div class="toolbar">
-        <input id="buscador" class="input" type="search" placeholder="Buscar pan… (concha, bolillo…)" />
-        <select id="filtroCategoria" class="input"></select>
-      </div>
-      <div id="grid" class="grid"></div>
-    </section>
+      <!-- TICKET DERECHA -->
+      <aside id="vistaTicket" class="panel">
+        <div class="ticket-head">
+          <h2 style="margin:0">🧾 Ticket</h2>
+          <button id="btnOpenInv" title="Abrir inventario">Inventario</button>
+        </div>
+        <div id="folio" class="muted small" style="margin-top:6px"></div>
+        <hr/>
+        <div id="ticketList"></div>
+        <div class="ticket-total">
+          <span>Total</span><strong id="ticketTotal">$0.00</strong>
+        </div>
+      </aside>
+    </div>
 
-    <!-- INVENTARIO -->
-    <section id="vistaInventario" class="view hidden">
+    <!-- INVENTARIO (debajo, ancho completo) -->
+    <section id="vistaInventario" class="panel hidden">
       <h2>📦 Inventario</h2>
       <div class="inv-actions">
-        <button id="btnResetLocal" class="btn ghost">Revertir cambios (reset)</button>
+        <button id="btnResetLocal" class="btn ghost">Revertir cambios locales</button>
         <button id="btnExportJSON" class="btn ghost">Exportar productos.json</button>
+        <button id="btnSalirInv" class="btn warn">Salir del inventario</button>
       </div>
-
       <table class="table">
         <thead>
-          <tr>
-            <th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th>
-          </tr>
+          <tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr>
         </thead>
         <tbody id="invBody"></tbody>
       </table>
-
       <h3>➕ Agregar producto</h3>
       <form id="formAgregar" class="form">
         <input name="nombre" class="input" placeholder="Nombre" required />
-        <input name="categoria" class="input" placeholder="Categoría (Dulce, Salado…)" required />
+        <input name="categoria" class="input" placeholder="Categoría" required />
         <input name="precio" class="input" type="number" min="0" step="0.01" placeholder="Precio" required />
         <input name="stock" class="input" type="number" min="0" step="1" placeholder="Stock" required />
         <input name="imagen" class="input" placeholder="Ruta imagen (opcional)" />
         <button class="btn">Agregar</button>
       </form>
     </section>
-
-    <!-- TICKET -->
-    <section id="vistaTicket" class="view hidden">
-      <h2>🧾 Ticket de compra</h2>
-      <div id="ticketList"></div>
-      <div class="ticket-total">
-        <span>Total</span><strong id="ticketTotal">$0.00</strong>
-      </div>
-      <div class="ticket-actions">
-        <button id="btnClearTicket" class="btn ghost">Vaciar ticket</button>
-        <button id="btnPDF" class="btn">Generar PDF</button>
-      </div>
-    </section>
   </main>
 
-  <!-- jsPDF para el ticket -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-/Cw7Z0z2sYw1nD5F7E6rVw3H0pEJz6U8jvUq6mY/Gn2K3cF8m9zq3Zr0Yt3uVt9k7mC7Y7jv7vGq6wV8F7H0wQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="script.js"></script>
+  <!-- MODAL LOGIN -->
+  <div id="loginModal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Acceso de administrador</h3>
+      <form id="formLogin" class="form login">
+        <input id="u" class="input" placeholder="Usuario" autocomplete="username" required>
+        <input id="p" class="input" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+        <div class="row">
+          <button class="btn">Entrar</button>
+          <button type="button" id="cancelLogin" class="btn ghost">Cancelar</button>
+        </div>
+        <p class="muted small">Usuario: <b>admin</b> &nbsp;|&nbsp; Contraseña: <b>1234</b></p>
+      </form>
+    </div>
+  </div>
+
+<script>
+/* ===== Datos base ===== */
+const CATALOGO = [
+  {id:"pan001", nombre:"Concha de Vainilla", categoria:"Dulce", precio:10, stock:24},
+  {id:"pan002", nombre:"Concha de Chocolate", categoria:"Dulce", precio:11, stock:20},
+  {id:"pan003", nombre:"Cuernito (Croissant)", categoria:"Hojaldre", precio:14, stock:18},
+  {id:"pan004", nombre:"Oreja", categoria:"Hojaldre", precio:9, stock:26},
+  {id:"pan005", nombre:"Dona Glaseada", categoria:"Dulce", precio:12, stock:30},
+  {id:"pan006", nombre:"Pan de Elote", categoria:"Especialidad", precio:16, stock:12},
+  {id:"pan009", nombre:"Bolillo", categoria:"Salado", precio:4, stock:60},
+  {id:"pan010", nombre:"Telera", categoria:"Salado", precio:5, stock:50}
+];
+
+const money = n => Number(n).toLocaleString('es-MX',{style:'currency',currency:'MXN'});
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const AUTH_KEY='biscocho_admin_session', OVK='biscocho_overrides_v1';
+
+let overrides = JSON.parse(localStorage.getItem(OVK)||'{}');
+let productos = merge(CATALOGO, overrides);
+let cart = JSON.parse(localStorage.getItem('biscocho_cart')||'{}');
+
+function merge(base,ov){
+  const map = new Map(base.map(p=>[p.id,{...p}]));
+  if(ov){
+    for(const [id,patch] of Object.entries(ov)){
+      if(id==='__new') continue;
+      if(map.has(id)) map.set(id,{...map.get(id),...patch});
+    }
+    if(Array.isArray(ov.__new)) ov.__new.forEach(p=>map.set(p.id,{...p}));
+  }
+  return Array.from(map.values());
+}
+function writeOverride(id,patch){
+  overrides = overrides||{};
+  if(!overrides[id]) overrides[id]={};
+  Object.assign(overrides[id],patch);
+  localStorage.setItem(OVK, JSON.stringify(overrides));
+  productos = merge(CATALOGO, overrides);
+}
+
+/* ===== Catálogo ===== */
+function buildFilters(){
+  const cats = ['Todas', ...new Set(productos.map(p=>p.categoria))];
+  $('#filtroCategoria').innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
+}
+function renderCatalogo(){
+  const q=($('#buscador').value||'').toLowerCase();
+  const cat=$('#filtroCategoria').value||'Todas';
+  const list = productos.filter(p => (cat==='Todas'||p.categoria===cat) && p.nombre.toLowerCase().includes(q));
+  const root = $('#grid'); root.innerHTML='';
+  list.forEach(p=>{
+    const d=document.createElement('div');
+    d.className='card';
+    d.innerHTML=`
+      <div class="meta"><span class="badge">${p.categoria}</span><span class="price">${money(p.precio)}</span></div>
+      <h3>${p.nombre}</h3>
+      <div class="meta"><span>Stock: ${p.stock??0}</span><span>ID: ${p.id}</span></div>
+      <button class="btn" data-id="${p.id}" ${!p.stock||p.stock<=0?'disabled':''}>Agregar</button>`;
+    root.appendChild(d);
+  });
+  root.querySelectorAll('button[data-id]').forEach(b=> b.onclick = ()=> addToCart(b.dataset.id));
+}
+$('#buscador').oninput=renderCatalogo; $('#filtroCategoria').onchange=renderCatalogo;
+
+/* ===== Ticket ===== */
+function addToCart(id){
+  const p=productos.find(x=>x.id===id); if(!p||(p.stock|0)<=0) return;
+  cart[id]=(cart[id]||0)+1; writeOverride(id,{stock:(p.stock|0)-1});
+  localStorage.setItem('biscocho_cart', JSON.stringify(cart));
+  renderCatalogo(); renderTicket();
+}
+function decFromCart(id){
+  if(!cart[id]) return; cart[id]-=1; if(cart[id]<=0) delete cart[id];
+  const p=productos.find(x=>x.id===id); if(p) writeOverride(id,{stock:(p.stock|0)+1});
+  localStorage.setItem('biscocho_cart', JSON.stringify(cart));
+  renderCatalogo(); renderTicket();
+}
+function cartData(){
+  const items = Object.entries(cart).map(([id,qty])=>{
+    const p=productos.find(x=>x.id===id)||{}; const precio=Number(p.precio||0);
+    return {id,nombre:p.nombre||id,precio,qty,sub:precio*qty};
+  });
+  const total=items.reduce((a,b)=>a+b.sub,0);
+  return {items,total};
+}
+function renderTicket(){
+  const {items,total}=cartData();
+  const root=$('#ticketList'); root.innerHTML='';
+  if(!items.length) root.innerHTML='<p class="muted">No hay productos en el ticket.</p>';
+  items.forEach(it=>{
+    const row=document.createElement('div'); row.className='ticket-item';
+    row.innerHTML=`
+      <div>${it.nombre}</div>
+      <div class="price">${money(it.precio)}</div>
+      <div class="qtyctl">
+        <button class="btn ghost" data-k="-" data-id="${it.id}">−</button>
+        <span>${it.qty}</span>
+        <button class="btn ghost" data-k="+" data-id="${it.id}">+</button>
+      </div>
+      <div class="price">${money(it.sub)}</div>`;
+    root.appendChild(row);
+  });
+  root.querySelectorAll('button').forEach(b=>{
+    const id=b.dataset.id,k=b.dataset.k; b.onclick=()=> (k==='+')?addToCart(id):decFromCart(id);
+  });
+  $('#ticketTotal').textContent = money(total);
+  const f=new Date();
+  $('#folio').textContent=`Folio: ${f.getFullYear()}${String(f.getMonth()+1).padStart(2,'0')}${String(f.getDate()).padStart(2,'0')}-${f.getHours()}${String(f.getMinutes()).padStart(2,'0')}${String(f.getSeconds()).padStart(2,'0')}`;
+}
+$('#btnVaciar').onclick=()=>{
+  for(const [id,qty] of Object.entries(cart)){
+    const p=productos.find(x=>x.id===id); if(p) writeOverride(id,{stock:(p.stock|0)+qty});
+  }
+  cart={}; localStorage.setItem('biscocho_cart','{}'); renderCatalogo(); renderTicket();
+};
+$('#btnImprimir').onclick=()=>window.print();
+$('#btnPDF').onclick=()=>{
+  const { jsPDF } = window.jspdf;
+  const {items,total}=cartData();
+  const alto=Math.max(100,40+items.length*6+30);
+  const doc=new jsPDF({unit:'mm',format:[80,alto]});
+  const fecha=new Date().toLocaleString('es-MX'); let y=8;
+  doc.setFontSize(13); doc.text('El Biscocho Sabroso',40,y,{align:'center'}); y+=6;
+  doc.setFontSize(9);  doc.text('RFC: BIS010101ABC',40,y,{align:'center'}); y+=5;
+  doc.text('Calle Pan #123, Col. Centro',40,y,{align:'center'}); y+=5;
+  doc.text(`Fecha: ${fecha}`,40,y,{align:'center'}); y+=5;
+  doc.text('----------------------------------------',40,y,{align:'center'}); y+=5;
+  doc.setFontSize(10); doc.text('Producto',4,y); doc.text('Cant',46,y); doc.text('P.U.',58,y); doc.text('Sub',72,y,{align:'right'}); y+=4;
+  items.forEach(it=>{ doc.text(it.nombre,4,y); doc.text(String(it.qty),46,y,{align:'right'});
+    doc.text(money(it.precio).replace('MXN',''),58,y,{align:'right'});
+    doc.text(money(it.sub).replace('MXN',''),72,y,{align:'right'}); y+=5;});
+  y+=2; doc.text('----------------------------------------',40,y,{align:'center'}); y+=6;
+  doc.setFontSize(12); doc.text(`TOTAL: ${money(total)}`,72,y,{align:'right'}); y+=8;
+  doc.setFontSize(9);  doc.text('¡Gracias por su compra!',40,y,{align:'center'});
+  doc.save('ticket_biscocho.pdf');
+};
+
+/* ===== Inventario ===== */
+function ensureAdmin(){ return sessionStorage.getItem(AUTH_KEY)==='1'; }
+function openInventory(){
+  $('#vistaInventario').classList.remove('hidden');
+  renderInventario(); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+}
+function renderInventario(){
+  const body=$('#invBody'); body.innerHTML='';
+  productos.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${p.id}</td>
+      <td><input class="input" data-f="nombre" data-id="${p.id}" value="${p.nombre??''}"></td>
+      <td><input class="input" data-f="categoria" data-id="${p.id}" value="${p.categoria??''}"></td>
+      <td><input class="input" data-f="precio" data-id="${p.id}" type="number" min="0" step="0.01" value="${Number(p.precio)||0}"></td>
+      <td>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn ghost" data-k="-" data-id="${p.id}">−</button>
+          <input class="input w-90" data-f="stock" data-id="${p.id}" type="number" min="0" step="1" value="${Number(p.stock)||0}">
+          <button class="btn ghost" data-k="+" data-id="${p.id}">+</button>
+        </div>
+      </td>
+      <td>
+        <button class="btn" data-act="save" data-id="${p.id}">Guardar</button>
+        <button class="btn ghost" data-act="del" data-id="${p.id}">Borrar</button>
+      </td>`;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll('button[data-k]').forEach(b=>{
+    b.onclick=()=>{
+      const id=b.dataset.id,k=b.dataset.k;
+      const p=productos.find(x=>x.id===id);
+      const s=(Number(p?.stock)||0)+(k==='+'?1:-1);
+      writeOverride(id,{stock:Math.max(0,s)});
+      renderInventario(); renderCatalogo();
+    };
+  });
+  body.querySelectorAll('button[data-act="save"]').forEach(b=>{
+    b.onclick=()=>{
+      const id=b.dataset.id; const vals={};
+      body.querySelectorAll(`[data-id="${id}"][data-f]`).forEach(inp=>{
+        const f=inp.dataset.f, v=inp.value;
+        vals[f]=(f==='precio'||f==='stock')?Number(v):v;
+      });
+      writeOverride(id,vals); renderInventario(); renderCatalogo(); alert('Producto actualizado.');
+    };
+  });
+  body.querySelectorAll('button[data-act="del"]').forEach(b=>{
+    b.onclick=()=>{
+      const id=b.dataset.id;
+      if(overrides?.__new){
+        const i=overrides.__new.findIndex(x=>x.id===id);
+        if(i>=0){ overrides.__new.splice(i,1); localStorage.setItem(OVK,JSON.stringify(overrides));
+          productos=merge(CATALOGO,overrides); renderInventario(); renderCatalogo(); return; }
+      }
+      writeOverride(id,{stock:0}); renderInventario(); renderCatalogo();
+    };
+  });
+}
+$('#btnResetLocal').onclick=()=>{
+  if(confirm('¿Descartar TODOS los cambios locales?')){
+    localStorage.removeItem(OVK); overrides={}; productos=merge(CATALOGO,overrides);
+    renderInventario(); renderCatalogo();
+  }
+};
+$('#btnExportJSON').onclick=()=>{
+  const blob=new Blob([JSON.stringify({productos},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='productos.json'; a.click(); URL.revokeObjectURL(a.href);
+};
+$('#btnSalirInv').onclick=()=>{
+  sessionStorage.removeItem(AUTH_KEY);
+  $('#vistaInventario').classList.add('hidden');
+  alert('Sesión cerrada.');
+};
+
+/* ===== Login (botón en el ticket) ===== */
+function openLogin(){ $('#loginModal').classList.remove('hidden'); $('#u').focus(); }
+function closeLogin(){ $('#loginModal').classList.add('hidden'); $('#u').value=''; $('#p').value=''; }
+$('#btnOpenInv').onclick = openLogin;
+$('#cancelLogin').onclick = closeLogin;
+$('#formLogin').onsubmit = (e)=>{
+  e.preventDefault();
+  const u=$('#u').value.trim(); const p=$('#p').value.trim();
+  if(u==='admin' && p==='1234'){
+    sessionStorage.setItem(AUTH_KEY,'1');
+    closeLogin(); openInventory();
+  }else alert('Credenciales incorrectas.');
+};
+
+/* ===== Init ===== */
+(function init(){
+  buildFilters(); renderCatalogo(); renderTicket();
+})();
+</script>
 </body>
 </html>
