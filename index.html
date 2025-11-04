@@ -35,20 +35,14 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
 .ticket-item .qtyctl{display:flex;gap:6px;align-items:center}
 .ticket-total{display:flex;justify-content:space-between;background:#fff3e0;border:1px solid #f2d2c8;border-radius:10px;padding:10px;margin-top:8px}
 .muted{color:#6d4c41}.small{font-size:12px}
-
-/* Inventario ancho completo */
 #vistaInventario{grid-column:1/-1;margin-top:8px}
 .table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin:10px 0}
 .table th,.table td{padding:12px;border-bottom:1px solid #f2d2c8;text-align:left}
 .table th{background:#fff3e0}
 .inv-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .w-90{max-width:90px}
-
-/* Botón inventario en cabecera del ticket */
 .ticket-head{display:flex;justify-content:space-between;align-items:center}
 #btnOpenInv{background:#fff;color:var(--primary);border:1px solid var(--primary);border-radius:999px;padding:6px 10px;font-weight:700}
-
-/* Modal login */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:grid;place-items:center;z-index:50}
 .modal-card{background:#fff;border-radius:14px;padding:20px;min-width:290px;max-width:360px;box-shadow:var(--shadow)}
 .form{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
@@ -68,79 +62,83 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
     <div><strong>Dirección:</strong> Calle Del Pan #420, Col. De las Delicias</div>
   </div>
 </header>
-  <main class="container">
-    <div class="grid">
-      <!-- CATALOGO IZQUIERDA -->
-      <section id="vistaCatalogo" class="panel">
-        <div class="toolbar">
-          <input id="buscador" class="input" type="search" placeholder="Buscar pan… (concha, bolillo…)" />
-          <select id="filtroCategoria" class="input"></select>
-          <button id="btnVaciar" class="btn ghost">Vaciar ticket</button>
-          <button id="btnImprimir" class="btn ghost">Imprimir</button>
-          <button id="btnPDF" class="btn">Generar Ticket</button>
-        </div>
-        <div id="grid" class="gridCards"></div>
-      </section>
 
-      <!-- TICKET DERECHA -->
-      <aside id="vistaTicket" class="panel">
-        <div class="ticket-head">
-          <h2 style="margin:0">🧾 Ticket</h2>
-          <button id="btnOpenInv" title="Abrir inventario">Inventario</button>
-        </div>
-        <div id="folio" class="muted small" style="margin-top:6px"></div>
-        <hr/>
-        <div id="ticketList"></div>
-        <div class="ticket-total">
-          <span>Total</span><strong id="ticketTotal">$0.00</strong>
-        </div>
-      </aside>
-    </div>
-
-    <!-- INVENTARIO (debajo, ancho completo) -->
-    <section id="vistaInventario" class="panel hidden">
-      <h2>📦 Inventario</h2>
-      <div class="inv-actions">
-        <button id="btnResetLocal" class="btn ghost">Revertir cambios locales</button>
-        <button id="btnExportJSON" class="btn ghost">Exportar productos.json</button>
-        <button id="btnSalirInv" class="btn warn">Salir del inventario</button>
+<main class="container">
+  <div class="grid">
+    <!-- CATALOGO IZQUIERDA -->
+    <section id="vistaCatalogo" class="panel">
+      <div class="toolbar">
+        <input id="buscador" class="input" type="search" placeholder="Buscar pan… (concha, bolillo…)" />
+        <select id="filtroCategoria" class="input"></select>
+        <button id="btnVaciar" class="btn ghost">Vaciar ticket</button>
+        <button id="btnImprimir" class="btn ghost">Imprimir</button>
+        <button id="btnPDF" class="btn">Generar Ticket</button>
       </div>
-      <table class="table">
-        <thead>
-          <tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr>
-        </thead>
-        <tbody id="invBody"></tbody>
-      </table>
-      <h3>➕ Agregar producto</h3>
-      <form id="formAgregar" class="form">
-        <input name="nombre" class="input" placeholder="Nombre" required />
-        <input name="categoria" class="input" placeholder="Categoría" required />
-        <input name="precio" class="input" type="number" min="0" step="0.01" placeholder="Precio" required />
-        <input name="stock" class="input" type="number" min="0" step="1" placeholder="Stock" required />
-        <input name="imagen" class="input" placeholder="Ruta imagen (opcional)" />
-        <button class="btn">Agregar</button>
-      </form>
+      <div id="grid" class="gridCards"></div>
     </section>
-  </main>
 
-  <!-- MODAL LOGIN -->
-  <div id="loginModal" class="modal hidden">
-    <div class="modal-card">
-      <h3>Acceso de administrador</h3>
-      <form id="formLogin" class="form login">
-        <input id="u" class="input" placeholder="Usuario" autocomplete="username" required>
-        <input id="p" class="input" type="password" placeholder="Contraseña" autocomplete="current-password" required>
-        <div class="row">
-          <button class="btn">Entrar</button>
-          <button type="button" id="cancelLogin" class="btn ghost">Cancelar</button>
-        </div>
-        <p class="muted small">Usuario: <b>admin</b> &nbsp;|&nbsp; Contraseña: <b>1234</b></p>
-      </form>
-    </div>
+    <!-- TICKET DERECHA -->
+    <aside id="vistaTicket" class="panel">
+      <div class="ticket-head">
+        <h2 style="margin:0">🧾 Ticket</h2>
+        <button id="btnOpenInv" title="Abrir inventario">Inventario</button>
+      </div>
+      <div id="folio" class="muted small" style="margin-top:6px"></div>
+      <hr/>
+      <div id="ticketList"></div>
+      <div class="ticket-total">
+        <span>Total</span><strong id="ticketTotal">$0.00</strong>
+      </div>
+    </aside>
   </div>
 
+  <!-- INVENTARIO (debajo, ancho completo) -->
+  <section id="vistaInventario" class="panel hidden">
+    <h2>📦 Inventario</h2>
+    <div class="inv-actions">
+      <button id="btnResetLocal" class="btn ghost">Revertir cambios locales</button>
+      <button id="btnExportJSON" class="btn ghost">Exportar productos.json</button>
+      <button id="btnSalirInv" class="btn warn">Salir del inventario</button>
+    </div>
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr>
+      </thead>
+      <tbody id="invBody"></tbody>
+    </table>
+    <h3>➕ Agregar producto</h3>
+    <form id="formAgregar" class="form">
+      <input name="nombre" class="input" placeholder="Nombre" required />
+      <input name="categoria" class="input" placeholder="Categoría" required />
+      <input name="precio" class="input" type="number" min="0" step="0.01" placeholder="Precio" required />
+      <input name="stock" class="input" type="number" min="0" step="1" placeholder="Stock" required />
+      <input name="imagen" class="input" placeholder="Ruta imagen (opcional)" />
+      <button class="btn">Agregar</button>
+    </form>
+  </section>
+</main>
+
+<!-- MODAL LOGIN -->
+<div id="loginModal" class="modal hidden">
+  <div class="modal-card">
+    <h3>Acceso de administrador</h3>
+    <form id="formLogin" class="form login">
+      <input id="u" class="input" placeholder="Usuario" autocomplete="username" required>
+      <input id="p" class="input" type="password" placeholder="Contraseña" autocomplete="current-password" required>
+      <div class="row">
+        <button class="btn">Entrar</button>
+        <button type="button" id="cancelLogin" class="btn ghost">Cancelar</button>
+      </div>
+      <p class="muted small">Usuario: <b>admin</b> &nbsp;|&nbsp; Contraseña: <b>1234</b></p>
+    </form>
+  </div>
+</div>
+
 <script>
-/* ===== Datos base ===== */
+/* ================== CONFIG/API ================== */
+const API = 'https://TU-DOMINIO/biscocho_api/api'; // <-- AJUSTA ESTA URL
+
+/* ===== Catálogo local (fallback) ===== */
 const CATALOGO = [
   {id:"pan001", nombre:"Concha de Vainilla", categoria:"Dulce", precio:10, stock:24},
   {id:"pan002", nombre:"Concha de Chocolate", categoria:"Dulce", precio:11, stock:20},
@@ -152,15 +150,18 @@ const CATALOGO = [
   {id:"pan010", nombre:"Telera", categoria:"Salado", precio:5, stock:50}
 ];
 
+/* ===== Utils/estado ===== */
 const money = n => Number(n).toLocaleString('es-MX',{style:'currency',currency:'MXN'});
 const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 const AUTH_KEY='biscocho_admin_session', OVK='biscocho_overrides_v1';
 
 let overrides = JSON.parse(localStorage.getItem(OVK)||'{}');
-let productos = merge(CATALOGO, overrides);
+let productosBase = CATALOGO.slice();              // BD o fallback
+let productos = merge(productosBase, overrides);   // base + overrides
 let cart = JSON.parse(localStorage.getItem('biscocho_cart')||'{}');
 
+/* ===== Merge/override helpers ===== */
 function merge(base,ov){
   const map = new Map(base.map(p=>[p.id,{...p}]));
   if(ov){
@@ -177,10 +178,33 @@ function writeOverride(id,patch){
   if(!overrides[id]) overrides[id]={};
   Object.assign(overrides[id],patch);
   localStorage.setItem(OVK, JSON.stringify(overrides));
-  productos = merge(CATALOGO, overrides);
+  productos = merge(productosBase, overrides);
 }
 
-/* ===== Catálogo ===== */
+/* ================== 3.1 CARGAR DESDE LA API ================== */
+async function loadProductos(){
+  try{
+    const res = await fetch(`${API}/productos.php`, { cache:'no-store' });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    productosBase = (Array.isArray(data)?data:[]).map(p=>({
+      id: String(p.id),
+      nombre: String(p.nombre),
+      categoria: String(p.categoria),
+      precio: Number(p.precio ?? 0),
+      stock: Number(p.stock ?? 0),
+      imagen: p.imagen ? String(p.imagen) : ''
+    }));
+  }catch(err){
+    console.warn('[loadProductos] No se pudo leer BD, uso fallback local:', err);
+    productosBase = CATALOGO.slice();
+  }
+  productos = merge(productosBase, overrides);
+  if (typeof buildFilters === 'function') buildFilters();
+  if (typeof renderCatalogo === 'function') renderCatalogo();
+}
+
+/* ================== CATÁLOGO (UI) ================== */
 function buildFilters(){
   const cats = ['Todas', ...new Set(productos.map(p=>p.categoria))];
   $('#filtroCategoria').innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
@@ -204,7 +228,7 @@ function renderCatalogo(){
 }
 $('#buscador').oninput=renderCatalogo; $('#filtroCategoria').onchange=renderCatalogo;
 
-/* ===== Ticket ===== */
+/* ================== TICKET ================== */
 function addToCart(id){
   const p=productos.find(x=>x.id===id); if(!p||(p.stock|0)<=0) return;
   cart[id]=(cart[id]||0)+1; writeOverride(id,{stock:(p.stock|0)-1});
@@ -256,28 +280,91 @@ $('#btnVaciar').onclick=()=>{
   cart={}; localStorage.setItem('biscocho_cart','{}'); renderCatalogo(); renderTicket();
 };
 $('#btnImprimir').onclick=()=>window.print();
-$('#btnPDF').onclick=()=>{
+
+/* ================== 3.2 REGISTRAR VENTA EN BD ================== */
+async function registrarVentaEnBD(snapshot) {
+  // snapshot: {items,total,folio}
+  const payload = {
+    folio: snapshot.folio,
+    items: snapshot.items.map(it => ({ id: it.id, qty: it.qty }))
+  };
+
+  const btn = document.querySelector('#btnPDF');
+  const prevText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Guardando venta...';
+
+  try {
+    const res = await fetch(`${API}/ventas.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+
+    // Limpia carrito y overrides y recarga catálogo desde BD
+    cart = {};
+    localStorage.setItem('biscocho_cart','{}');
+    localStorage.removeItem(OVK);
+    overrides = {};
+    await loadProductos();
+    renderTicket();
+    return true;
+  } catch (err) {
+    console.error('[registrarVentaEnBD]', err);
+    alert('No se pudo registrar la venta en la base de datos:\n' + err.message);
+    return false;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = prevText;
+  }
+}
+
+/* === Reemplazo del handler de Generar Ticket (snapshot + BD + PDF) === */
+document.querySelector('#btnPDF').onclick = async () => {
+  // 1) Toma snapshot del ticket ANTES de limpiar
+  const cd = cartData();
+  if (!cd.items.length) { alert('El ticket está vacío.'); return; }
+  const folioTxt = document.querySelector('#folio')?.textContent || '';
+  const folio = folioTxt.replace('Folio: ','').trim() || (new Date().toISOString().replace(/\D/g,'').slice(0,14));
+  const snapshot = { items: cd.items, total: cd.total, folio };
+
+  // 2) Registrar en BD
+  const ok = await registrarVentaEnBD(snapshot);
+  if (!ok) return;
+
+  // 3) Generar PDF con los datos del snapshot (lo vendido)
   const { jsPDF } = window.jspdf;
-  const {items,total}=cartData();
+  const items = snapshot.items;
+  const total = snapshot.total;
+
   const alto=Math.max(100,40+items.length*6+30);
   const doc=new jsPDF({unit:'mm',format:[80,alto]});
-  const fecha=new Date().toLocaleString('es-MX'); let y=8;
+  let y=8;
+  const fecha=new Date().toLocaleString('es-MX');
+
   doc.setFontSize(13); doc.text('El Biscocho Sabroso',40,y,{align:'center'}); y+=6;
   doc.setFontSize(9);  doc.text('RFC: BIS140798SKA',40,y,{align:'center'}); y+=5;
   doc.text('Calle Del Pan #420, Col. De las Delicias',40,y,{align:'center'}); y+=5;
   doc.text(`Fecha: ${fecha}`,40,y,{align:'center'}); y+=5;
+  doc.text(`Folio: ${snapshot.folio}`,40,y,{align:'center'}); y+=5;
   doc.text('----------------------------------------',40,y,{align:'center'}); y+=5;
   doc.setFontSize(10); doc.text('Producto',4,y); doc.text('Cant',46,y); doc.text('P.U.',58,y); doc.text('Sub',72,y,{align:'right'}); y+=4;
-  items.forEach(it=>{ doc.text(it.nombre,4,y); doc.text(String(it.qty),46,y,{align:'right'});
+  items.forEach(it=>{ 
+    doc.text(it.nombre,4,y);
+    doc.text(String(it.qty),46,y,{align:'right'});
     doc.text(money(it.precio).replace('MXN',''),58,y,{align:'right'});
-    doc.text(money(it.sub).replace('MXN',''),72,y,{align:'right'}); y+=5;});
+    doc.text(money(it.sub).replace('MXN',''),72,y,{align:'right'}); 
+    y+=5;
+  });
   y+=2; doc.text('----------------------------------------',40,y,{align:'center'}); y+=6;
   doc.setFontSize(12); doc.text(`TOTAL: ${money(total)}`,72,y,{align:'right'}); y+=8;
   doc.setFontSize(9);  doc.text('¡Gracias por su compra!',40,y,{align:'center'});
   doc.save('ticket_biscocho.pdf');
 };
 
-/* ===== Inventario ===== */
+/* ================== INVENTARIO ================== */
 function ensureAdmin(){ return sessionStorage.getItem(AUTH_KEY)==='1'; }
 function openInventory(){
   $('#vistaInventario').classList.remove('hidden');
@@ -330,7 +417,7 @@ function renderInventario(){
       if(overrides?.__new){
         const i=overrides.__new.findIndex(x=>x.id===id);
         if(i>=0){ overrides.__new.splice(i,1); localStorage.setItem(OVK,JSON.stringify(overrides));
-          productos=merge(CATALOGO,overrides); renderInventario(); renderCatalogo(); return; }
+          productos=merge(productosBase,overrides); renderInventario(); renderCatalogo(); return; }
       }
       writeOverride(id,{stock:0}); renderInventario(); renderCatalogo();
     };
@@ -338,7 +425,7 @@ function renderInventario(){
 }
 $('#btnResetLocal').onclick=()=>{
   if(confirm('¿Descartar TODOS los cambios locales?')){
-    localStorage.removeItem(OVK); overrides={}; productos=merge(CATALOGO,overrides);
+    localStorage.removeItem(OVK); overrides={}; productos=merge(productosBase,overrides);
     renderInventario(); renderCatalogo();
   }
 };
@@ -352,7 +439,7 @@ $('#btnSalirInv').onclick=()=>{
   alert('Sesión cerrada.');
 };
 
-/* ===== Login (botón en el ticket) ===== */
+/* ================== LOGIN ================== */
 function openLogin(){ $('#loginModal').classList.remove('hidden'); $('#u').focus(); }
 function closeLogin(){ $('#loginModal').classList.add('hidden'); $('#u').value=''; $('#p').value=''; }
 $('#btnOpenInv').onclick = openLogin;
@@ -366,9 +453,10 @@ $('#formLogin').onsubmit = (e)=>{
   }else alert('Credenciales incorrectas.');
 };
 
-/* ===== Init ===== */
-(function init(){
-  buildFilters(); renderCatalogo(); renderTicket();
+/* ================== INIT ================== */
+(async function init(){
+  await loadProductos();    // Carga desde BD (o fallback)
+  renderTicket();
 })();
 </script>
 </body>
