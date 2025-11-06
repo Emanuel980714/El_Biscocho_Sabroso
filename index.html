@@ -6,11 +6,9 @@
 <title>El Biscocho Sabroso — Punto de Venta</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
-:root{
-  --bg:#fff7f2; --panel:#fff; --ink:#3e2723; --muted:#6d4c41;
+:root{ --bg:#fff7f2; --panel:#fff; --ink:#3e2723; --muted:#6d4c41;
   --primary:#ff7043; --primary2:#ff8a65; --ring:#ffe0b2;
-  --radius:14px; --shadow:0 8px 24px rgba(0,0,0,.08);
-}
+  --radius:14px; --shadow:0 8px 24px rgba(0,0,0,.08);}
 *{box-sizing:border-box}
 body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;color:var(--ink);background:var(--bg)}
 .container{max-width:1200px;margin:16px auto;padding:0 16px}
@@ -54,9 +52,7 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
 <body>
 
 <header>
-  <div class="brand">
-    <h1>🥐 El Biscocho Sabroso</h1>
-  </div>
+  <div class="brand"><h1>🥐 El Biscocho Sabroso</h1></div>
   <div class="small">
     <div><strong>RFC:</strong> BIS140798SKA</div>
     <div><strong>Dirección:</strong> Calle Del Pan #420, Col. De las Delicias</div>
@@ -65,7 +61,6 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
 
 <main class="container">
   <div class="grid">
-    <!-- CATALOGO IZQUIERDA -->
     <section id="vistaCatalogo" class="panel">
       <div class="toolbar">
         <input id="buscador" class="input" type="search" placeholder="Buscar pan… (concha, bolillo…)" />
@@ -77,7 +72,6 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
       <div id="grid" class="gridCards"></div>
     </section>
 
-    <!-- TICKET DERECHA -->
     <aside id="vistaTicket" class="panel">
       <div class="ticket-head">
         <h2 style="margin:0">🧾 Ticket</h2>
@@ -86,13 +80,10 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
       <div id="folio" class="muted small" style="margin-top:6px"></div>
       <hr/>
       <div id="ticketList"></div>
-      <div class="ticket-total">
-        <span>Total</span><strong id="ticketTotal">$0.00</strong>
-      </div>
+      <div class="ticket-total"><span>Total</span><strong id="ticketTotal">$0.00</strong></div>
     </aside>
   </div>
 
-  <!-- INVENTARIO (debajo, ancho completo) -->
   <section id="vistaInventario" class="panel hidden">
     <h2>📦 Inventario</h2>
     <div class="inv-actions">
@@ -101,9 +92,7 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
       <button id="btnSalirInv" class="btn warn">Salir del inventario</button>
     </div>
     <table class="table">
-      <thead>
-        <tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr>
-      </thead>
+      <thead><tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
       <tbody id="invBody"></tbody>
     </table>
     <h3>➕ Agregar producto</h3>
@@ -118,27 +107,23 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
   </section>
 </main>
 
-<!-- MODAL LOGIN -->
 <div id="loginModal" class="modal hidden">
   <div class="modal-card">
     <h3>Acceso de administrador</h3>
     <form id="formLogin" class="form login">
       <input id="u" class="input" placeholder="Usuario" autocomplete="username" required>
       <input id="p" class="input" type="password" placeholder="Contraseña" autocomplete="current-password" required>
-      <div class="row">
-        <button class="btn">Entrar</button>
-        <button type="button" id="cancelLogin" class="btn ghost">Cancelar</button>
-      </div>
-      <p class="muted small">Usuario: <b>admin</b> &nbsp;|&nbsp; Contraseña: <b>1234</b></p>
+      <div class="row"><button class="btn">Entrar</button><button type="button" id="cancelLogin" class="btn ghost">Cancelar</button></div>
+      <p class="muted small">Usuario: <b>admin</b> | Contraseña: <b>1234</b></p>
     </form>
   </div>
 </div>
 
 <script>
-/* ================== CONFIG/API ================== */
-const API = 'https://TU-DOMINIO/biscocho_api/api'; // <-- AJUSTA ESTA URL
+/* ===== CONFIG ===== */
+const API = 'http://localhost/biscocho_api/api'; // Cambia a https://TU-DOMINIO/biscocho_api/api en hosting
 
-/* ===== Catálogo local (fallback) ===== */
+/* ===== Fallback local por si falla la API ===== */
 const CATALOGO = [
   {id:"pan001", nombre:"Concha de Vainilla", categoria:"Dulce", precio:10, stock:24},
   {id:"pan002", nombre:"Concha de Chocolate", categoria:"Dulce", precio:11, stock:20},
@@ -150,18 +135,17 @@ const CATALOGO = [
   {id:"pan010", nombre:"Telera", categoria:"Salado", precio:5, stock:50}
 ];
 
-/* ===== Utils/estado ===== */
+/* ===== Helpers/estado ===== */
 const money = n => Number(n).toLocaleString('es-MX',{style:'currency',currency:'MXN'});
 const $  = s => document.querySelector(s);
 const $$ = s => Array.from(document.querySelectorAll(s));
 const AUTH_KEY='biscocho_admin_session', OVK='biscocho_overrides_v1';
 
 let overrides = JSON.parse(localStorage.getItem(OVK)||'{}');
-let productosBase = CATALOGO.slice();              // BD o fallback
-let productos = merge(productosBase, overrides);   // base + overrides
+let productosBase = CATALOGO.slice();
+let productos = merge(productosBase, overrides);
 let cart = JSON.parse(localStorage.getItem('biscocho_cart')||'{}');
 
-/* ===== Merge/override helpers ===== */
 function merge(base,ov){
   const map = new Map(base.map(p=>[p.id,{...p}]));
   if(ov){
@@ -181,30 +165,29 @@ function writeOverride(id,patch){
   productos = merge(productosBase, overrides);
 }
 
-/* ================== 3.1 CARGAR DESDE LA API ================== */
+/* ===== 3.1 Cargar productos desde la API ===== */
 async function loadProductos(){
   try{
     const res = await fetch(`${API}/productos.php`, { cache:'no-store' });
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     productosBase = (Array.isArray(data)?data:[]).map(p=>({
-      id: String(p.id),
-      nombre: String(p.nombre),
-      categoria: String(p.categoria),
-      precio: Number(p.precio ?? 0),
-      stock: Number(p.stock ?? 0),
-      imagen: p.imagen ? String(p.imagen) : ''
+      id:String(p.id),
+      nombre:String(p.nombre),
+      categoria:String(p.categoria),
+      precio:Number(p.precio??0),
+      stock:Number(p.stock??0),
+      imagen:p.imagen?String(p.imagen):''
     }));
   }catch(err){
-    console.warn('[loadProductos] No se pudo leer BD, uso fallback local:', err);
+    console.warn('[loadProductos] BD no disponible, uso catálogo local:', err);
     productosBase = CATALOGO.slice();
   }
   productos = merge(productosBase, overrides);
-  if (typeof buildFilters === 'function') buildFilters();
-  if (typeof renderCatalogo === 'function') renderCatalogo();
+  buildFilters(); renderCatalogo();
 }
 
-/* ================== CATÁLOGO (UI) ================== */
+/* ===== Catálogo / Ticket ===== */
 function buildFilters(){
   const cats = ['Todas', ...new Set(productos.map(p=>p.categoria))];
   $('#filtroCategoria').innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
@@ -228,7 +211,6 @@ function renderCatalogo(){
 }
 $('#buscador').oninput=renderCatalogo; $('#filtroCategoria').onchange=renderCatalogo;
 
-/* ================== TICKET ================== */
 function addToCart(id){
   const p=productos.find(x=>x.id===id); if(!p||(p.stock|0)<=0) return;
   cart[id]=(cart[id]||0)+1; writeOverride(id,{stock:(p.stock|0)-1});
@@ -281,68 +263,50 @@ $('#btnVaciar').onclick=()=>{
 };
 $('#btnImprimir').onclick=()=>window.print();
 
-/* ================== 3.2 REGISTRAR VENTA EN BD ================== */
+/* ===== 3.2 Registrar venta en BD (descuenta stock) ===== */
 async function registrarVentaEnBD(snapshot) {
-  // snapshot: {items,total,folio}
-  const payload = {
-    folio: snapshot.folio,
-    items: snapshot.items.map(it => ({ id: it.id, qty: it.qty }))
-  };
-
-  const btn = document.querySelector('#btnPDF');
-  const prevText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Guardando venta...';
-
-  try {
+  const btn = $('#btnPDF'); const prev = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Guardando venta...';
+  try{
     const res = await fetch(`${API}/ventas.php`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ folio: snapshot.folio, items: snapshot.items.map(i=>({id:i.id,qty:i.qty})) })
     });
     const data = await res.json();
-    if (!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-
-    // Limpia carrito y overrides y recarga catálogo desde BD
-    cart = {};
-    localStorage.setItem('biscocho_cart','{}');
-    localStorage.removeItem(OVK);
-    overrides = {};
-    await loadProductos();
-    renderTicket();
+    if(!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+    // limpiar local y recargar
+    cart = {}; localStorage.setItem('biscocho_cart','{}');
+    localStorage.removeItem(OVK); overrides = {};
+    await loadProductos(); renderTicket();
     return true;
-  } catch (err) {
-    console.error('[registrarVentaEnBD]', err);
-    alert('No se pudo registrar la venta en la base de datos:\n' + err.message);
+  }catch(err){
+    console.error(err);
+    alert('No se pudo registrar la venta en la BD.\n' + (err.message||''));
     return false;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = prevText;
+  }finally{
+    btn.disabled = false; btn.textContent = prev;
   }
 }
 
-/* === Reemplazo del handler de Generar Ticket (snapshot + BD + PDF) === */
+/* ===== Handler: Generar Ticket (snapshot + BD + PDF) ===== */
 document.querySelector('#btnPDF').onclick = async () => {
-  // 1) Toma snapshot del ticket ANTES de limpiar
   const cd = cartData();
   if (!cd.items.length) { alert('El ticket está vacío.'); return; }
-  const folioTxt = document.querySelector('#folio')?.textContent || '';
+  const folioTxt = $('#folio')?.textContent || '';
   const folio = folioTxt.replace('Folio: ','').trim() || (new Date().toISOString().replace(/\D/g,'').slice(0,14));
   const snapshot = { items: cd.items, total: cd.total, folio };
 
-  // 2) Registrar en BD
   const ok = await registrarVentaEnBD(snapshot);
   if (!ok) return;
 
-  // 3) Generar PDF con los datos del snapshot (lo vendido)
   const { jsPDF } = window.jspdf;
   const items = snapshot.items;
   const total = snapshot.total;
 
   const alto=Math.max(100,40+items.length*6+30);
   const doc=new jsPDF({unit:'mm',format:[80,alto]});
-  let y=8;
-  const fecha=new Date().toLocaleString('es-MX');
+  let y=8; const fecha=new Date().toLocaleString('es-MX');
 
   doc.setFontSize(13); doc.text('El Biscocho Sabroso',40,y,{align:'center'}); y+=6;
   doc.setFontSize(9);  doc.text('RFC: BIS140798SKA',40,y,{align:'center'}); y+=5;
@@ -364,7 +328,7 @@ document.querySelector('#btnPDF').onclick = async () => {
   doc.save('ticket_biscocho.pdf');
 };
 
-/* ================== INVENTARIO ================== */
+/* ===== Inventario mínimo local (sigue igual) ===== */
 function ensureAdmin(){ return sessionStorage.getItem(AUTH_KEY)==='1'; }
 function openInventory(){
   $('#vistaInventario').classList.remove('hidden');
@@ -408,56 +372,25 @@ function renderInventario(){
         const f=inp.dataset.f, v=inp.value;
         vals[f]=(f==='precio'||f==='stock')?Number(v):v;
       });
-      writeOverride(id,vals); renderInventario(); renderCatalogo(); alert('Producto actualizado.');
+      writeOverride(id,vals); renderInventario(); renderCatalogo(); alert('Producto actualizado (local).');
     };
   });
   body.querySelectorAll('button[data-act="del"]').forEach(b=>{
-    b.onclick=()=>{
-      const id=b.dataset.id;
-      if(overrides?.__new){
-        const i=overrides.__new.findIndex(x=>x.id===id);
-        if(i>=0){ overrides.__new.splice(i,1); localStorage.setItem(OVK,JSON.stringify(overrides));
-          productos=merge(productosBase,overrides); renderInventario(); renderCatalogo(); return; }
-      }
-      writeOverride(id,{stock:0}); renderInventario(); renderCatalogo();
-    };
+    b.onclick=()=>{ const id=b.dataset.id; writeOverride(id,{stock:0}); renderInventario(); renderCatalogo(); };
   });
 }
-$('#btnResetLocal').onclick=()=>{
-  if(confirm('¿Descartar TODOS los cambios locales?')){
-    localStorage.removeItem(OVK); overrides={}; productos=merge(productosBase,overrides);
-    renderInventario(); renderCatalogo();
-  }
-};
-$('#btnExportJSON').onclick=()=>{
-  const blob=new Blob([JSON.stringify({productos},null,2)],{type:'application/json'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='productos.json'; a.click(); URL.revokeObjectURL(a.href);
-};
-$('#btnSalirInv').onclick=()=>{
-  sessionStorage.removeItem(AUTH_KEY);
-  $('#vistaInventario').classList.add('hidden');
-  alert('Sesión cerrada.');
-};
+$('#btnResetLocal').onclick=()=>{ if(confirm('¿Descartar TODOS los cambios locales?')){ localStorage.removeItem(OVK); overrides={}; productos=merge(productosBase,overrides); renderInventario(); renderCatalogo(); }};
+$('#btnExportJSON').onclick=()=>{ const blob=new Blob([JSON.stringify({productos},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='productos.json'; a.click(); URL.revokeObjectURL(a.href); };
+$('#btnSalirInv').onclick=()=>{ sessionStorage.removeItem(AUTH_KEY); $('#vistaInventario').classList.add('hidden'); alert('Sesión cerrada.'); };
 
-/* ================== LOGIN ================== */
 function openLogin(){ $('#loginModal').classList.remove('hidden'); $('#u').focus(); }
 function closeLogin(){ $('#loginModal').classList.add('hidden'); $('#u').value=''; $('#p').value=''; }
 $('#btnOpenInv').onclick = openLogin;
 $('#cancelLogin').onclick = closeLogin;
-$('#formLogin').onsubmit = (e)=>{
-  e.preventDefault();
-  const u=$('#u').value.trim(); const p=$('#p').value.trim();
-  if(u==='admin' && p==='1234'){
-    sessionStorage.setItem(AUTH_KEY,'1');
-    closeLogin(); openInventory();
-  }else alert('Credenciales incorrectas.');
-};
+$('#formLogin').onsubmit = (e)=>{ e.preventDefault(); const u=$('#u').value.trim(), p=$('#p').value.trim(); if(u==='admin'&&p==='1234'){ sessionStorage.setItem(AUTH_KEY,'1'); closeLogin(); openInventory(); } else alert('Credenciales incorrectas.'); };
 
-/* ================== INIT ================== */
-(async function init(){
-  await loadProductos();    // Carga desde BD (o fallback)
-  renderTicket();
-})();
+/* ===== Init ===== */
+(async function init(){ await loadProductos(); renderTicket(); })();
 </script>
 </body>
 </html>
