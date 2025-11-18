@@ -47,18 +47,114 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
 .form.login{grid-template-columns:1fr}
 .row{display:flex;gap:10px}
 .hidden{display:none!important}
+
+/* ===== ESTILO EXTRA PARA SECCIONES TIPO “PAPELERÍA” ===== */
+header{
+  background:#fff;
+  border-bottom:1px solid #f2d2c8;
+}
+header .container-header{
+  max-width:1200px;
+  margin:0 auto;
+  padding:12px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+header .brand{font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px;}
+header .small{color:var(--muted);}
+
+.section{
+  max-width:1200px;
+  margin:40px auto;
+  padding:0 16px;
+}
+.section-title{
+  text-align:center;
+  font-size:28px;
+  margin-bottom:10px;
+}
+.section-sub{
+  text-align:center;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+
+/* Visita nuestra panadería */
+.visit-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+  gap:20px;
+}
+@media (max-width:900px){
+  .visit-grid{grid-template-columns:1fr;}
+}
+.map-card,.info-card{
+  background:#fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:14px;
+}
+.map-card iframe{
+  border:0;
+  border-radius:12px;
+  width:100%;
+  height:260px;
+}
+.info-card h3{margin-top:0;margin-bottom:6px;}
+.info-card dl{margin:0;}
+.info-card dt{font-weight:700;margin-top:6px;}
+.info-card dd{margin:0;color:var(--muted);}
+
+/* Contacto */
+.contact-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+  gap:20px;
+}
+@media (max-width:900px){
+  .contact-grid{grid-template-columns:1fr;}
+}
+.contact-form{
+  background:#fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:18px 16px;
+}
+.field{margin-bottom:12px;}
+label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin-bottom:4px;
+}
+textarea{min-height:110px;resize:vertical;}
+
+footer{
+  background:#3e2723;
+  color:#fef3c7;
+  text-align:center;
+  padding:16px 12px 22px;
+  font-size:14px;
+  margin-top:40px;
+}
+footer a{color:#ffd54f;text-decoration:underline;}
 </style>
 </head>
 <body>
 
+<!-- ENCABEZADO SIMPLE -->
 <header>
-  <div class="brand"><h1>🥐 El Biscocho Sabroso</h1></div>
-  <div class="small">
-    <div><strong>RFC:</strong> BIS140798SKA</div>
-    <div><strong>Dirección:</strong> Calle Del Pan #420, Col. De las Delicias</div>
+  <div class="container-header">
+    <div class="brand"><span>🥐</span> El Biscocho Sabroso</div>
+    <div class="small">
+      <div><strong>RFC:</strong> BIS140798SKA</div>
+      <div><strong>Dirección:</strong> Calle Del Pan #420, Col. De las Delicias</div>
+    </div>
   </div>
 </header>
 
+<!-- PUNTO DE VENTA (TU CÓDIGO ORIGINAL) -->
 <main class="container">
   <div class="grid">
     <section id="vistaCatalogo" class="panel">
@@ -107,6 +203,91 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
   </section>
 </main>
 
+<!-- SECCIÓN: VISITA NUESTRA PANADERÍA -->
+<section id="visita" class="section">
+  <h2 class="section-title">Visita Nuestra Panadería</h2>
+  <p class="section-sub">
+    Ven por tu pan calientito. Aquí tienes cómo encontrarnos y nuestro horario.
+  </p>
+  <div class="visit-grid">
+    <div class="map-card">
+      <!-- Sustituye el src por el que te dé Google Maps (Insertar mapa) -->
+      <iframe
+       src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d471.67456741734344!2d-99.27836553409603!3d18.958086990003792!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cde7530861bf15%3A0x23e7ce71df84c16!2sDrogadictos%20An%C3%B3nimos%20A.C.%20Grupo%20Renacimiento!5e0!3m2!1ses!2smx!4v1763503848941!5m2!1ses!2smx" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen="">
+      </iframe>
+    </div>
+    <div class="info-card">
+      <h3>Horario de Atención</h3>
+      <dl>
+        <dt>Lunes a Viernes:</dt>
+        <dd>7:00 - 20:00</dd>
+        <dt>Sábados:</dt>
+        <dd>8:00 - 18:00</dd>
+        <dt>Domingos:</dt>
+        <dd>Cerrado</dd>
+      </dl>
+
+      <h3 style="margin-top:14px;">Dirección</h3>
+      <p class="small">
+        Calle Del Pan #420, Col. De las Delicias.  
+        <br>Teléfono: <a href="tel:+527622147504">777-458-8371</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN: CONTACTO (GUARDA EN BD) -->
+<section id="contacto" class="section">
+  <h2 class="section-title">Envíanos un mensaje</h2>
+  <p class="section-sub">
+    ¿Quieres cotizar pedido de pan, hacer un comentario o agendar? Llena el formulario y lo revisamos en la panadería.
+  </p>
+  <div class="contact-grid">
+    <div>
+      <h3>Pan hecho con cariño</h3>
+      <p class="small">
+      </p>
+      <p class="small">
+        También puedes escribirnos por WhatsApp al  
+        <a href="https://wa.me/527622147504?text=Hola%20El%20Biscocho%20Sabroso,%20quiero%20informaci%C3%B3n%20sobre%20sus%20productos."
+           target="_blank" rel="noopener">
+          777 458 8371
+        </a>.
+      </p>
+    </div>
+
+    <form id="formContacto" class="form-contacto">
+  <label>Nombre completo
+    <input type="text" name="nombre" class="input" required />
+  </label>
+
+  <label>Correo electrónico
+    <input type="email" name="correo" class="input" required />
+  </label>
+
+  <label>Teléfono (opcional)
+    <input type="tel" name="telefono" class="input" />
+  </label>
+
+  <label>Asunto
+    <input type="text" name="asunto" class="input" required />
+  </label>
+
+  <label>Mensaje
+    <textarea name="mensaje" class="input" rows="4" required></textarea>
+  </label>
+
+  <button type="submit" class="btn">Enviar mensaje</button>
+</form>
+
+  </div>
+</section>
+
+<!-- MODAL LOGIN (igual que tenías) -->
 <div id="loginModal" class="modal hidden">
   <div class="modal-card">
     <h3>Acceso de administrador</h3>
@@ -119,6 +300,12 @@ button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
   </div>
 </div>
 
+<footer>
+  El Biscocho Sabroso © 2025 – Panadería artesanal.  
+  <br>Contacto: <a href="mailto:renacimiento@drogadictosanonimos.org">renacimiento@drogadictosanonimos.org</a> | Tel: 777 458 8371
+</footer>
+
+<!-- ================== JS ORIGINAL (SIN CAMBIOS) ================== -->
 <script>
 /* ===== CONFIG ===== */
 const API = 'http://localhost/biscocho_api/api'; // Cambia a https://TU-DOMINIO/biscocho_api/api en hosting
@@ -328,7 +515,7 @@ document.querySelector('#btnPDF').onclick = async () => {
   doc.save('ticket_biscocho.pdf');
 };
 
-/* ===== Inventario mínimo local (sigue igual) ===== */
+/* ===== Inventario mínimo local ===== */
 function ensureAdmin(){ return sessionStorage.getItem(AUTH_KEY)==='1'; }
 function openInventory(){
   $('#vistaInventario').classList.remove('hidden');
@@ -392,5 +579,30 @@ $('#formLogin').onsubmit = (e)=>{ e.preventDefault(); const u=$('#u').value.trim
 /* ===== Init ===== */
 (async function init(){ await loadProductos(); renderTicket(); })();
 </script>
-</body>
-</html>
+<script>
+document.getElementById('formContacto').addEventListener('submit', async (e) => {
+  e.preventDefault(); // No recargar la página
+
+  const form = e.target;
+  const datos = new FormData(form);
+
+  try {
+    const res = await fetch('guardar_mensaje.php', {
+      method: 'POST',
+      body: datos
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      alert('¡Mensaje enviado correctamente! 😊');
+      form.reset();
+    } else {
+      alert('Error al enviar el mensaje: ' + (data.error || 'Intenta de nuevo'));
+    }
+  } catch (err) {
+    alert('Error de conexión con el servidor.');
+    console.error(err);
+  }
+});
+</script>
