@@ -1,608 +1,918 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>El Biscocho Sabroso — Punto de Venta</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<style>
-:root{ --bg:#fff7f2; --panel:#fff; --ink:#3e2723; --muted:#6d4c41;
-  --primary:#ff7043; --primary2:#ff8a65; --ring:#ffe0b2;
-  --radius:14px; --shadow:0 8px 24px rgba(0,0,0,.08);}
-*{box-sizing:border-box}
-body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;color:var(--ink);background:var(--bg)}
-.container{max-width:1200px;margin:16px auto;padding:0 16px}
-.grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
-@media (max-width:980px){.grid{grid-template-columns:1fr}}
-.panel{background:#fff;border:1px solid #f2d2c8;border-radius:var(--radius);box-shadow:var(--shadow);padding:12px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.input,select,button{padding:10px 12px;border-radius:10px;border:1px solid #edd;outline:none}
-.input{background:#fff;min-width:220px}
-button{cursor:pointer;font-weight:700;box-shadow:var(--shadow);border:0}
-.btn{background:var(--primary);color:#fff}
-.btn.ghost{background:#fff;color:var(--primary);border:1px solid var(--primary)}
-.btn.warn{background:#f44336;color:#fff}
-.gridCards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-.card{background:#fff;border:1px solid #f2d2c8;border-radius:var(--radius);padding:12px;display:flex;gap:8px;flex-direction:column;box-shadow:var(--shadow)}
-.card h3{margin:0}
-.meta{display:flex;justify-content:space-between;align-items:center;color:#6d4c41;font-size:13px}
-.badge{background:#ffe0b2;border:1px solid #f2c48e;border-radius:999px;padding:2px 8px}
-.price{font-weight:800}
-#ticketList{display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto}
-.ticket-item{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;background:#fff;border:1px solid #f2d2c8;border-radius:10px;padding:8px}
-.ticket-item .qtyctl{display:flex;gap:6px;align-items:center}
-.ticket-total{display:flex;justify-content:space-between;background:#fff3e0;border:1px solid #f2d2c8;border-radius:10px;padding:10px;margin-top:8px}
-.muted{color:#6d4c41}.small{font-size:12px}
-#vistaInventario{grid-column:1/-1;margin-top:8px}
-.table{width:100%;border-collapse:collapse;background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);margin:10px 0}
-.table th,.table td{padding:12px;border-bottom:1px solid #f2d2c8;text-align:left}
-.table th{background:#fff3e0}
-.inv-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-.w-90{max-width:90px}
-.ticket-head{display:flex;justify-content:space-between;align-items:center}
-#btnOpenInv{background:#fff;color:var(--primary);border:1px solid var(--primary);border-radius:999px;padding:6px 10px;font-weight:700}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:grid;place-items:center;z-index:50}
-.modal-card{background:#fff;border-radius:14px;padding:20px;min-width:290px;max-width:360px;box-shadow:var(--shadow)}
-.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-.form.login{grid-template-columns:1fr}
-.row{display:flex;gap:10px}
-.hidden{display:none!important}
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Taller de Panadería — El Biscocho Sabroso</title>
 
-/* ===== ESTILO EXTRA PARA SECCIONES TIPO “PAPELERÍA” ===== */
-header{
-  background:#fff;
-  border-bottom:1px solid #f2d2c8;
-}
-header .container-header{
-  max-width:1200px;
-  margin:0 auto;
-  padding:12px 16px;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-header .brand{font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px;}
-header .small{color:var(--muted);}
+  <style>
+    :root{
+      --bg:#fff7f2;
+      --panel:#ffffff;
+      --ink:#3e2723;
+      --muted:#6d4c41;
+      --primary:#ff7043;
+      --primary-soft:#ffe0d1;
+      --accent:#2563eb;
+      --pill:#fee2b3;
+      --pill-text:#92400e;
+      --radius:18px;
+      --shadow:0 10px 28px rgba(15,23,42,.10);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,Segoe UI,Roboto,Arial;
+      color:var(--ink);
+      background:var(--bg);
+    }
 
-.section{
-  max-width:1200px;
-  margin:40px auto;
-  padding:0 16px;
-}
-.section-title{
-  text-align:center;
-  font-size:28px;
-  margin-bottom:10px;
-}
-.section-sub{
-  text-align:center;
-  color:var(--muted);
-  margin-bottom:24px;
-}
+    /* ============ HEADER ============ */
+    .site-header{
+      background:#ffffff;
+      box-shadow:0 2px 12px rgba(15,23,42,.08);
+      position:sticky;
+      top:0;
+      z-index:30;
+    }
+    .header-bar{
+      max-width:1200px;
+      margin:0 auto;
+      padding:8px 16px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+    }
+    .header-logo-left,
+    .header-logo-right{
+      flex-shrink:0;
+    }
+    .header-logo-left img,
+    .header-logo-right img{
+      height:68px;
+      width:auto;
+      display:block;
+    }
 
-/* Visita nuestra panadería */
-.visit-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
-  gap:20px;
-}
-@media (max-width:900px){
-  .visit-grid{grid-template-columns:1fr;}
-}
-.map-card,.info-card{
-  background:#fff;
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:14px;
-}
-.map-card iframe{
-  border:0;
-  border-radius:12px;
-  width:100%;
-  height:260px;
-}
-.info-card h3{margin-top:0;margin-bottom:6px;}
-.info-card dl{margin:0;}
-.info-card dt{font-weight:700;margin-top:6px;}
-.info-card dd{margin:0;color:var(--muted);}
+    .header-center{
+      flex:1;
+      text-align:center;
+    }
+    .brand-title{
+      font-size:24px;
+      font-weight:800;
+      letter-spacing:.02em;
+    }
+    .brand-sub{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:2px;
+    }
 
-/* Contacto */
-.contact-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
-  gap:20px;
-}
-@media (max-width:900px){
-  .contact-grid{grid-template-columns:1fr;}
-}
-.contact-form{
-  background:#fff;
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  padding:18px 16px;
-}
-.field{margin-bottom:12px;}
-label{
-  display:block;
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:4px;
-}
-textarea{min-height:110px;resize:vertical;}
+    .main-nav{
+      margin-top:10px;
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:10px;
+      font-size:14px;
+    }
+    .nav-link{
+      padding:6px 14px;
+      border-radius:999px;
+      text-decoration:none;
+      color:#1d4ed8;
+      background:transparent;
+      transition:background .15s,color .15s;
+    }
+    .nav-link:hover{
+      background:rgba(37,99,235,.08);
+    }
+    .nav-link.active{
+      background:rgba(37,99,235,.14);
+      text-decoration:underline;
+      text-underline-offset:3px;
+    }
 
-footer{
-  background:#3e2723;
-  color:#fef3c7;
-  text-align:center;
-  padding:16px 12px 22px;
-  font-size:14px;
-  margin-top:40px;
-}
-footer a{color:#ffd54f;text-decoration:underline;}
-</style>
+    @media (max-width:800px){
+      .header-bar{
+        flex-direction:column;
+        align-items:center;
+      }
+      .header-logo-left img,
+      .header-logo-right img{
+        height:56px;
+      }
+    }
+
+    /* ============ SECCIONES GENERALES ============ */
+    main{
+      padding:24px 0 40px;
+    }
+    .page-section{
+      display:none;
+      padding:12px 16px 24px;
+    }
+    .page-section.active-section{
+      display:block;
+    }
+    .section-inner{
+      max-width:1100px;
+      margin:0 auto;
+    }
+    .section-title{
+      font-size:28px;
+      text-align:center;
+      margin:0 0 6px;
+    }
+    .section-sub{
+      text-align:center;
+      color:var(--muted);
+      max-width:720px;
+      margin:0 auto 24px;
+      font-size:14px;
+    }
+
+    /* ============ INICIO ============ */
+    .hero{
+      display:grid;
+      grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);
+      gap:28px;
+      align-items:center;
+    }
+    .hero-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#fee2e2;
+      color:#b91c1c;
+      font-size:12px;
+      font-weight:600;
+      margin-bottom:8px;
+    }
+    .hero-title{
+      font-size:32px;
+      margin:0 0 8px;
+    }
+    .hero-text{
+      color:var(--muted);
+      font-size:15px;
+      margin-bottom:18px;
+    }
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .btn{
+      border-radius:999px;
+      padding:9px 18px;
+      font-size:14px;
+      border:none;
+      cursor:pointer;
+      font-weight:600;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      text-decoration:none;
+    }
+    .btn-primary{
+      background:var(--primary);
+      color:#fff;
+      box-shadow:var(--shadow);
+    }
+    .btn-outline{
+      background:transparent;
+      color:var(--primary);
+      border:1px solid var(--primary);
+    }
+    .hero-panel{
+      background:var(--panel);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 16px;
+      font-size:14px;
+    }
+    .hero-panel h3{
+      margin-top:0;
+      margin-bottom:8px;
+      font-size:17px;
+    }
+    .hero-panel ul{
+      padding-left:18px;
+      margin:0;
+      color:var(--muted);
+    }
+    @media(max-width:900px){
+      .hero{
+        grid-template-columns:1fr;
+      }
+    }
+
+    /* ============ SOBRE EL CENTRO ============ */
+    .two-col{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+      gap:24px;
+      align-items:flex-start;
+    }
+    .card-panel{
+      background:var(--panel);
+      border-radius:var(--radius);
+      padding:18px 18px 16px;
+      box-shadow:var(--shadow);
+      font-size:14px;
+    }
+    .card-panel h3{
+      margin-top:0;
+      margin-bottom:8px;
+    }
+    .card-panel ul{
+      margin:0;
+      padding-left:18px;
+      color:var(--muted);
+    }
+    @media(max-width:900px){
+      .two-col{grid-template-columns:1fr;}
+    }
+
+    /* ============ TALLER / MAPA ============ */
+    .highlight-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      gap:18px;
+      margin-bottom:26px;
+    }
+    .highlight-card{
+      background:var(--panel);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px 14px;
+      font-size:14px;
+    }
+    .highlight-card h3{
+      margin-top:0;
+      margin-bottom:6px;
+      font-size:16px;
+    }
+
+    .visit-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);
+      gap:20px;
+    }
+    @media (max-width:900px){
+      .visit-grid{grid-template-columns:1fr;}
+    }
+    .map-card,.info-card{
+      background:#fff;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+    }
+    .map-card iframe{
+      border:0;
+      border-radius:12px;
+      width:100%;
+      height:260px;
+    }
+    .info-card h3{margin-top:0;margin-bottom:6px;}
+    .info-card dl{margin:0;}
+    .info-card dt{font-weight:700;margin-top:6px;}
+    .info-card dd{margin:0;color:var(--muted);}
+
+    /* ============ CATÁLOGO ============ */
+    .catalog-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:18px;
+    }
+    .bread-card{
+      background:var(--panel);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px 14px 16px;
+      font-size:14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .bread-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .pill{
+      padding:4px 9px;
+      border-radius:999px;
+      background:var(--pill);
+      color:var(--pill-text);
+      font-size:11px;
+      font-weight:600;
+    }
+    .bread-price{
+      color:#b91c1c;
+      font-weight:800;
+      font-size:15px;
+    }
+    .bread-img{
+      width:100%;
+      height:150px;
+      object-fit:cover;
+      border-radius:12px;
+      background:#fef3e7;
+    }
+    .bread-card h3{
+      margin:0;
+      font-size:16px;
+    }
+    .bread-code{
+      font-size:12px;
+      color:var(--muted);
+    }
+    .bread-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:6px;
+    }
+    .btn-whatsapp{
+      flex:1;
+      background:#22c55e;
+      color:#ffffff;
+      text-decoration:none;
+      text-align:center;
+      border-radius:999px;
+      padding:8px 10px;
+      font-weight:600;
+      font-size:13px;
+      box-shadow:var(--shadow);
+    }
+    .btn-secondary{
+      flex:1;
+      background:#dbeafe;
+      color:#1d4ed8;
+      border:none;
+      border-radius:999px;
+      padding:8px 10px;
+      font-weight:600;
+      font-size:13px;
+      cursor:pointer;
+    }
+
+    /* ============ CONTACTO / APOYO ============ */
+    .contact-grid{
+      display:grid;
+      grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+      gap:22px;
+    }
+    @media(max-width:900px){
+      .contact-grid{grid-template-columns:1fr;}
+    }
+    .contact-text{
+      font-size:14px;
+      color:var(--muted);
+    }
+    .contact-form{
+      background:var(--panel);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px 16px 16px;
+      font-size:14px;
+    }
+    .contact-form label{
+      display:block;
+      font-weight:600;
+      font-size:13px;
+      margin-bottom:6px;
+    }
+    .contact-form .field{
+      margin-bottom:10px;
+    }
+    .contact-form input,
+    .contact-form textarea{
+      width:100%;
+      margin-top:4px;
+      padding:9px 10px;
+      border-radius:10px;
+      border:1px solid #f0d5c7;
+      font-family:inherit;
+      font-size:14px;
+      outline:none;
+    }
+    .contact-form textarea{
+      min-height:110px;
+      resize:vertical;
+    }
+
+    /* ============ FOOTER ============ */
+    footer{
+      background:#111827;
+      color:#e5e7eb;
+      text-align:center;
+      padding:16px 12px 22px;
+      font-size:13px;
+    }
+    footer a{
+      color:#93c5fd;
+      text-decoration:underline;
+    }
+  </style>
 </head>
 <body>
 
-<!-- ENCABEZADO SIMPLE -->
-<header>
-  <div class="container-header">
-    <div class="brand"><span>🥐</span> El Biscocho Sabroso</div>
-    <div class="small">
-      <div><strong>RFC:</strong> BIS140798SKA</div>
-      <div><strong>Dirección:</strong> Calle Del Pan #420, Col. De las Delicias</div>
-    </div>
-  </div>
-</header>
-
-<!-- PUNTO DE VENTA (TU CÓDIGO ORIGINAL) -->
-<main class="container">
-  <div class="grid">
-    <section id="vistaCatalogo" class="panel">
-      <div class="toolbar">
-        <input id="buscador" class="input" type="search" placeholder="Buscar pan… (concha, bolillo…)" />
-        <select id="filtroCategoria" class="input"></select>
-        <button id="btnVaciar" class="btn ghost">Vaciar ticket</button>
-        <button id="btnImprimir" class="btn ghost">Imprimir</button>
-        <button id="btnPDF" class="btn">Generar Ticket</button>
+  <!-- ========== ENCABEZADO CON LOGOS ========== -->
+  <header class="site-header">
+    <div class="header-bar">
+      <div class="header-logo-left">
+        <img src="logo-ch.png" alt="Logo Drogadictos Anónimos A.C.">
       </div>
-      <div id="grid" class="gridCards"></div>
+
+      <div class="header-center">
+        <div class="brand-title">El Biscocho Sabroso</div>
+        <div class="brand-sub">
+          Taller de Panadería — Drogadictos Anónimos A.C. "Grupo Renacimiento"
+        </div>
+        <nav class="main-nav">
+          <a href="#inicio"   class="nav-link active" data-section="inicio">Inicio</a>
+          <a href="#centro"   class="nav-link" data-section="centro">Sobre el centro</a>
+          <a href="#taller"   class="nav-link" data-section="taller">Taller de panadería</a>
+          <a href="#catalogo" class="nav-link" data-section="catalogo">Catálogo de pan</a>
+          <a href="#contacto" class="nav-link" data-section="contacto">Contacto / Apoyo</a>
+        </nav>
+      </div>
+
+      <div class="header-logo-right">
+        <img src="LOGO.41.png" alt="41 años Unidos por el Amor">
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ========== INICIO ========== -->
+    <section id="inicio" class="page-section active-section">
+      <div class="section-inner">
+        <div class="hero">
+          <div>
+            <div class="hero-badge">41 años · Unidos por el Amor</div>
+            <h1 class="hero-title">Pan con propósito para recuperar vidas del mundo de la drogadicción</h1>
+            <p class="hero-text">
+              El Biscocho Sabroso es el taller de panadería del Grupo Renacimiento.
+              Aquí los compañeros en recuperación aprenden un oficio,
+              fortalecen su disciplina y generan recursos para sostener el centro.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" type="button"
+                      onclick="cambiarSeccion('catalogo')">
+                Ver catálogo de pan
+              </button>
+              <button class="btn btn-outline" type="button"
+                      onclick="cambiarSeccion('taller')">
+                Conocer el taller
+              </button>
+            </div>
+          </div>
+
+          <aside class="hero-panel">
+            <h3>¿Qué apoyas al comprar pan?</h3>
+            <ul>
+              <li>Becas para internos sin recursos.</li>
+              <li>Materiales y herramientas para el taller.</li>
+              <li>Alimentación e insumos básicos del centro.</li>
+              <li>Capacitación y reinserción laboral.</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
     </section>
 
-    <aside id="vistaTicket" class="panel">
-      <div class="ticket-head">
-        <h2 style="margin:0">🧾 Ticket</h2>
-        <button id="btnOpenInv" title="Abrir inventario">Inventario</button>
-      </div>
-      <div id="folio" class="muted small" style="margin-top:6px"></div>
-      <hr/>
-      <div id="ticketList"></div>
-      <div class="ticket-total"><span>Total</span><strong id="ticketTotal">$0.00</strong></div>
-    </aside>
-  </div>
+    <!-- ========== SOBRE EL CENTRO ========== -->
+    <section id="centro" class="page-section">
+      <div class="section-inner">
+        <h2 class="section-title">Sobre el centro</h2>
+        <p class="section-sub">
+          Drogadictos Anónimos A.C. Grupo Renacimiento es un centro de rehabilitación
+          que acompaña a hombres en su proceso de recuperación de adicciones
+          mediante un programa espiritual, terapéutico y de servicio de manera gratuita sin fines de lucro.
+        </p>
 
-  <section id="vistaInventario" class="panel hidden">
-    <h2>📦 Inventario</h2>
-    <div class="inv-actions">
-      <button id="btnResetLocal" class="btn ghost">Revertir cambios locales</button>
-      <button id="btnExportJSON" class="btn ghost">Exportar productos.json</button>
-      <button id="btnSalirInv" class="btn warn">Salir del inventario</button>
-    </div>
-    <table class="table">
-      <thead><tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
-      <tbody id="invBody"></tbody>
-    </table>
-    <h3>➕ Agregar producto</h3>
-    <form id="formAgregar" class="form">
-      <input name="nombre" class="input" placeholder="Nombre" required />
-      <input name="categoria" class="input" placeholder="Categoría" required />
-      <input name="precio" class="input" type="number" min="0" step="0.01" placeholder="Precio" required />
-      <input name="stock" class="input" type="number" min="0" step="1" placeholder="Stock" required />
-      <input name="imagen" class="input" placeholder="Ruta imagen (opcional)" />
-      <button class="btn">Agregar</button>
-    </form>
-  </section>
-</main>
+        <div class="two-col">
+          <div class="card-panel">
+            <h3 class="section-title">MISIÓN</h3>
+            <ul>
+              <li>Rehabilitar a personas con problemas de drogadicción, abarcando su aspecto físico, mental y espiritual, contribuyendo en su reinserción social, basados en el programa de los Doce Pasos.</li>
+            </ul>
+            <h3 class="section-title">VISIÓN</h3>
+            <ul>
+              <li>Crecer de manera sostenible para atender a más personas, ofreciendo servicios de rehabilitación que conserven la cultura de la asociación, apegados a la normatividad vigente.</li>
+            </ul>
+          </div>
 
-<!-- SECCIÓN: VISITA NUESTRA PANADERÍA -->
-<section id="visita" class="section">
-  <h2 class="section-title">Visita Nuestra Panadería</h2>
-  <p class="section-sub">
-    Ven por tu pan calientito. Aquí tienes cómo encontrarnos y nuestro horario.
-  </p>
-  <div class="visit-grid">
-    <div class="map-card">
-      <!-- Sustituye el src por el que te dé Google Maps (Insertar mapa) -->
-      <iframe
-       src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d471.67456741734344!2d-99.27836553409603!3d18.958086990003792!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cde7530861bf15%3A0x23e7ce71df84c16!2sDrogadictos%20An%C3%B3nimos%20A.C.%20Grupo%20Renacimiento!5e0!3m2!1ses!2smx!4v1763503848941!5m2!1ses!2smx" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        allowfullscreen="">
-      </iframe>
-    </div>
-    <div class="info-card">
-      <h3>Horario de Atención</h3>
-      <dl>
-        <dt>Lunes a Viernes:</dt>
-        <dd>7:00 - 20:00</dd>
-        <dt>Sábados:</dt>
-        <dd>8:00 - 18:00</dd>
-        <dt>Domingos:</dt>
-        <dd>Cerrado</dd>
-      </dl>
-
-      <h3 style="margin-top:14px;">Dirección</h3>
-      <p class="small">
-        Calle Del Pan #420, Col. De las Delicias.  
-        <br>Teléfono: <a href="tel:+527622147504">777-458-8371</a>
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- SECCIÓN: CONTACTO (GUARDA EN BD) -->
-<section id="contacto" class="section">
-  <h2 class="section-title">Envíanos un mensaje</h2>
-  <p class="section-sub">
-    ¿Quieres cotizar pedido de pan, hacer un comentario o agendar? Llena el formulario y lo revisamos en la panadería.
-  </p>
-  <div class="contact-grid">
-    <div>
-      <h3>Pan hecho con cariño</h3>
-      <p class="small">
-      </p>
-      <p class="small">
-        También puedes escribirnos por WhatsApp al  
-        <a href="https://wa.me/527622147504?text=Hola%20El%20Biscocho%20Sabroso,%20quiero%20informaci%C3%B3n%20sobre%20sus%20productos."
-           target="_blank" rel="noopener">
-          777 458 8371
-        </a>.
-      </p>
-    </div>
-
-    <form id="formContacto" class="form-contacto">
-  <label>Nombre completo
-    <input type="text" name="nombre" class="input" required />
-  </label>
-
-  <label>Correo electrónico
-    <input type="email" name="correo" class="input" required />
-  </label>
-
-  <label>Teléfono (opcional)
-    <input type="tel" name="telefono" class="input" />
-  </label>
-
-  <label>Asunto
-    <input type="text" name="asunto" class="input" required />
-  </label>
-
-  <label>Mensaje
-    <textarea name="mensaje" class="input" rows="4" required></textarea>
-  </label>
-
-  <button type="submit" class="btn">Enviar mensaje</button>
-</form>
-
-  </div>
-</section>
-
-<!-- MODAL LOGIN (igual que tenías) -->
-<div id="loginModal" class="modal hidden">
-  <div class="modal-card">
-    <h3>Acceso de administrador</h3>
-    <form id="formLogin" class="form login">
-      <input id="u" class="input" placeholder="Usuario" autocomplete="username" required>
-      <input id="p" class="input" type="password" placeholder="Contraseña" autocomplete="current-password" required>
-      <div class="row"><button class="btn">Entrar</button><button type="button" id="cancelLogin" class="btn ghost">Cancelar</button></div>
-      <p class="muted small">Usuario: <b>admin</b> | Contraseña: <b>1234</b></p>
-    </form>
-  </div>
-</div>
-
-<footer>
-  El Biscocho Sabroso © 2025 – Panadería artesanal.  
-  <br>Contacto: <a href="mailto:renacimiento@drogadictosanonimos.org">renacimiento@drogadictosanonimos.org</a> | Tel: 777 458 8371
-</footer>
-
-<!-- ================== JS ORIGINAL (SIN CAMBIOS) ================== -->
-<script>
-/* ===== CONFIG ===== */
-const API = 'http://localhost/biscocho_api/api'; // Cambia a https://TU-DOMINIO/biscocho_api/api en hosting
-
-/* ===== Fallback local por si falla la API ===== */
-const CATALOGO = [
-  {id:"pan001", nombre:"Concha de Vainilla", categoria:"Dulce", precio:10, stock:24},
-  {id:"pan002", nombre:"Concha de Chocolate", categoria:"Dulce", precio:11, stock:20},
-  {id:"pan003", nombre:"Cuernito (Croissant)", categoria:"Hojaldre", precio:14, stock:18},
-  {id:"pan004", nombre:"Oreja", categoria:"Hojaldre", precio:9, stock:26},
-  {id:"pan005", nombre:"Dona Glaseada", categoria:"Dulce", precio:12, stock:30},
-  {id:"pan006", nombre:"Pan de Elote", categoria:"Especialidad", precio:16, stock:12},
-  {id:"pan009", nombre:"Bolillo", categoria:"Salado", precio:4, stock:60},
-  {id:"pan010", nombre:"Telera", categoria:"Salado", precio:5, stock:50}
-];
-
-/* ===== Helpers/estado ===== */
-const money = n => Number(n).toLocaleString('es-MX',{style:'currency',currency:'MXN'});
-const $  = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
-const AUTH_KEY='biscocho_admin_session', OVK='biscocho_overrides_v1';
-
-let overrides = JSON.parse(localStorage.getItem(OVK)||'{}');
-let productosBase = CATALOGO.slice();
-let productos = merge(productosBase, overrides);
-let cart = JSON.parse(localStorage.getItem('biscocho_cart')||'{}');
-
-function merge(base,ov){
-  const map = new Map(base.map(p=>[p.id,{...p}]));
-  if(ov){
-    for(const [id,patch] of Object.entries(ov)){
-      if(id==='__new') continue;
-      if(map.has(id)) map.set(id,{...map.get(id),...patch});
-    }
-    if(Array.isArray(ov.__new)) ov.__new.forEach(p=>map.set(p.id,{...p}));
-  }
-  return Array.from(map.values());
-}
-function writeOverride(id,patch){
-  overrides = overrides||{};
-  if(!overrides[id]) overrides[id]={};
-  Object.assign(overrides[id],patch);
-  localStorage.setItem(OVK, JSON.stringify(overrides));
-  productos = merge(productosBase, overrides);
-}
-
-/* ===== 3.1 Cargar productos desde la API ===== */
-async function loadProductos(){
-  try{
-    const res = await fetch(`${API}/productos.php`, { cache:'no-store' });
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    productosBase = (Array.isArray(data)?data:[]).map(p=>({
-      id:String(p.id),
-      nombre:String(p.nombre),
-      categoria:String(p.categoria),
-      precio:Number(p.precio??0),
-      stock:Number(p.stock??0),
-      imagen:p.imagen?String(p.imagen):''
-    }));
-  }catch(err){
-    console.warn('[loadProductos] BD no disponible, uso catálogo local:', err);
-    productosBase = CATALOGO.slice();
-  }
-  productos = merge(productosBase, overrides);
-  buildFilters(); renderCatalogo();
-}
-
-/* ===== Catálogo / Ticket ===== */
-function buildFilters(){
-  const cats = ['Todas', ...new Set(productos.map(p=>p.categoria))];
-  $('#filtroCategoria').innerHTML = cats.map(c=>`<option>${c}</option>`).join('');
-}
-function renderCatalogo(){
-  const q=($('#buscador').value||'').toLowerCase();
-  const cat=$('#filtroCategoria').value||'Todas';
-  const list = productos.filter(p => (cat==='Todas'||p.categoria===cat) && p.nombre.toLowerCase().includes(q));
-  const root = $('#grid'); root.innerHTML='';
-  list.forEach(p=>{
-    const d=document.createElement('div');
-    d.className='card';
-    d.innerHTML=`
-      <div class="meta"><span class="badge">${p.categoria}</span><span class="price">${money(p.precio)}</span></div>
-      <h3>${p.nombre}</h3>
-      <div class="meta"><span>Stock: ${p.stock??0}</span><span>ID: ${p.id}</span></div>
-      <button class="btn" data-id="${p.id}" ${!p.stock||p.stock<=0?'disabled':''}>Agregar</button>`;
-    root.appendChild(d);
-  });
-  root.querySelectorAll('button[data-id]').forEach(b=> b.onclick = ()=> addToCart(b.dataset.id));
-}
-$('#buscador').oninput=renderCatalogo; $('#filtroCategoria').onchange=renderCatalogo;
-
-function addToCart(id){
-  const p=productos.find(x=>x.id===id); if(!p||(p.stock|0)<=0) return;
-  cart[id]=(cart[id]||0)+1; writeOverride(id,{stock:(p.stock|0)-1});
-  localStorage.setItem('biscocho_cart', JSON.stringify(cart));
-  renderCatalogo(); renderTicket();
-}
-function decFromCart(id){
-  if(!cart[id]) return; cart[id]-=1; if(cart[id]<=0) delete cart[id];
-  const p=productos.find(x=>x.id===id); if(p) writeOverride(id,{stock:(p.stock|0)+1});
-  localStorage.setItem('biscocho_cart', JSON.stringify(cart));
-  renderCatalogo(); renderTicket();
-}
-function cartData(){
-  const items = Object.entries(cart).map(([id,qty])=>{
-    const p=productos.find(x=>x.id===id)||{}; const precio=Number(p.precio||0);
-    return {id,nombre:p.nombre||id,precio,qty,sub:precio*qty};
-  });
-  const total=items.reduce((a,b)=>a+b.sub,0);
-  return {items,total};
-}
-function renderTicket(){
-  const {items,total}=cartData();
-  const root=$('#ticketList'); root.innerHTML='';
-  if(!items.length) root.innerHTML='<p class="muted">No hay productos en el ticket.</p>';
-  items.forEach(it=>{
-    const row=document.createElement('div'); row.className='ticket-item';
-    row.innerHTML=`
-      <div>${it.nombre}</div>
-      <div class="price">${money(it.precio)}</div>
-      <div class="qtyctl">
-        <button class="btn ghost" data-k="-" data-id="${it.id}">−</button>
-        <span>${it.qty}</span>
-        <button class="btn ghost" data-k="+" data-id="${it.id}">+</button>
-      </div>
-      <div class="price">${money(it.sub)}</div>`;
-    root.appendChild(row);
-  });
-  root.querySelectorAll('button').forEach(b=>{
-    const id=b.dataset.id,k=b.dataset.k; b.onclick=()=> (k==='+')?addToCart(id):decFromCart(id);
-  });
-  $('#ticketTotal').textContent = money(total);
-  const f=new Date();
-  $('#folio').textContent=`Folio: ${f.getFullYear()}${String(f.getMonth()+1).padStart(2,'0')}${String(f.getDate()).padStart(2,'0')}-${f.getHours()}${String(f.getMinutes()).padStart(2,'0')}${String(f.getSeconds()).padStart(2,'0')}`;
-}
-$('#btnVaciar').onclick=()=>{
-  for(const [id,qty] of Object.entries(cart)){
-    const p=productos.find(x=>x.id===id); if(p) writeOverride(id,{stock:(p.stock|0)+qty});
-  }
-  cart={}; localStorage.setItem('biscocho_cart','{}'); renderCatalogo(); renderTicket();
-};
-$('#btnImprimir').onclick=()=>window.print();
-
-/* ===== 3.2 Registrar venta en BD (descuenta stock) ===== */
-async function registrarVentaEnBD(snapshot) {
-  const btn = $('#btnPDF'); const prev = btn.textContent;
-  btn.disabled = true; btn.textContent = 'Guardando venta...';
-  try{
-    const res = await fetch(`${API}/ventas.php`, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ folio: snapshot.folio, items: snapshot.items.map(i=>({id:i.id,qty:i.qty})) })
-    });
-    const data = await res.json();
-    if(!res.ok || !data?.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-    // limpiar local y recargar
-    cart = {}; localStorage.setItem('biscocho_cart','{}');
-    localStorage.removeItem(OVK); overrides = {};
-    await loadProductos(); renderTicket();
-    return true;
-  }catch(err){
-    console.error(err);
-    alert('No se pudo registrar la venta en la BD.\n' + (err.message||''));
-    return false;
-  }finally{
-    btn.disabled = false; btn.textContent = prev;
-  }
-}
-
-/* ===== Handler: Generar Ticket (snapshot + BD + PDF) ===== */
-document.querySelector('#btnPDF').onclick = async () => {
-  const cd = cartData();
-  if (!cd.items.length) { alert('El ticket está vacío.'); return; }
-  const folioTxt = $('#folio')?.textContent || '';
-  const folio = folioTxt.replace('Folio: ','').trim() || (new Date().toISOString().replace(/\D/g,'').slice(0,14));
-  const snapshot = { items: cd.items, total: cd.total, folio };
-
-  const ok = await registrarVentaEnBD(snapshot);
-  if (!ok) return;
-
-  const { jsPDF } = window.jspdf;
-  const items = snapshot.items;
-  const total = snapshot.total;
-
-  const alto=Math.max(100,40+items.length*6+30);
-  const doc=new jsPDF({unit:'mm',format:[80,alto]});
-  let y=8; const fecha=new Date().toLocaleString('es-MX');
-
-  doc.setFontSize(13); doc.text('El Biscocho Sabroso',40,y,{align:'center'}); y+=6;
-  doc.setFontSize(9);  doc.text('RFC: BIS140798SKA',40,y,{align:'center'}); y+=5;
-  doc.text('Calle Del Pan #420, Col. De las Delicias',40,y,{align:'center'}); y+=5;
-  doc.text(`Fecha: ${fecha}`,40,y,{align:'center'}); y+=5;
-  doc.text(`Folio: ${snapshot.folio}`,40,y,{align:'center'}); y+=5;
-  doc.text('----------------------------------------',40,y,{align:'center'}); y+=5;
-  doc.setFontSize(10); doc.text('Producto',4,y); doc.text('Cant',46,y); doc.text('P.U.',58,y); doc.text('Sub',72,y,{align:'right'}); y+=4;
-  items.forEach(it=>{ 
-    doc.text(it.nombre,4,y);
-    doc.text(String(it.qty),46,y,{align:'right'});
-    doc.text(money(it.precio).replace('MXN',''),58,y,{align:'right'});
-    doc.text(money(it.sub).replace('MXN',''),72,y,{align:'right'}); 
-    y+=5;
-  });
-  y+=2; doc.text('----------------------------------------',40,y,{align:'center'}); y+=6;
-  doc.setFontSize(12); doc.text(`TOTAL: ${money(total)}`,72,y,{align:'right'}); y+=8;
-  doc.setFontSize(9);  doc.text('¡Gracias por su compra!',40,y,{align:'center'});
-  doc.save('ticket_biscocho.pdf');
-};
-
-/* ===== Inventario mínimo local ===== */
-function ensureAdmin(){ return sessionStorage.getItem(AUTH_KEY)==='1'; }
-function openInventory(){
-  $('#vistaInventario').classList.remove('hidden');
-  renderInventario(); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
-}
-function renderInventario(){
-  const body=$('#invBody'); body.innerHTML='';
-  productos.forEach(p=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td>${p.id}</td>
-      <td><input class="input" data-f="nombre" data-id="${p.id}" value="${p.nombre??''}"></td>
-      <td><input class="input" data-f="categoria" data-id="${p.id}" value="${p.categoria??''}"></td>
-      <td><input class="input" data-f="precio" data-id="${p.id}" type="number" min="0" step="0.01" value="${Number(p.precio)||0}"></td>
-      <td>
-        <div style="display:flex;gap:6px;align-items:center">
-          <button class="btn ghost" data-k="-" data-id="${p.id}">−</button>
-          <input class="input w-90" data-f="stock" data-id="${p.id}" type="number" min="0" step="1" value="${Number(p.stock)||0}">
-          <button class="btn ghost" data-k="+" data-id="${p.id}">+</button>
+          <div class="card-panel">
+            <h3 class="section-title">VALORES</h3>
+            <ul>
+              <li><b>Honestidad</b></li>
+              <li><b>Servicio</b></li>
+              <li><b>Respeto</b></li>
+              <li><b>Unidad</b></li>
+            </ul>
+          </div>
         </div>
-      </td>
-      <td>
-        <button class="btn" data-act="save" data-id="${p.id}">Guardar</button>
-        <button class="btn ghost" data-act="del" data-id="${p.id}">Borrar</button>
-      </td>`;
-    body.appendChild(tr);
-  });
-  body.querySelectorAll('button[data-k]').forEach(b=>{
-    b.onclick=()=>{
-      const id=b.dataset.id,k=b.dataset.k;
-      const p=productos.find(x=>x.id===id);
-      const s=(Number(p?.stock)||0)+(k==='+'?1:-1);
-      writeOverride(id,{stock:Math.max(0,s)});
-      renderInventario(); renderCatalogo();
-    };
-  });
-  body.querySelectorAll('button[data-act="save"]').forEach(b=>{
-    b.onclick=()=>{
-      const id=b.dataset.id; const vals={};
-      body.querySelectorAll(`[data-id="${id}"][data-f]`).forEach(inp=>{
-        const f=inp.dataset.f, v=inp.value;
-        vals[f]=(f==='precio'||f==='stock')?Number(v):v;
+      </div>
+    </section>
+
+    <!-- ========== TALLER DE PANADERÍA + MAPA ========== -->
+    <section id="taller" class="page-section">
+      <div class="section-inner">
+        <h2 class="section-title">Taller de panadería</h2>
+        <p class="section-sub">
+          El taller funciona dentro del centro como espacio terapéutico y formativo.
+          Cada pieza de pan que sale del horno lleva trabajo, disciplina y una historia de recuperación.
+        </p>
+
+        <div class="highlight-grid">
+          <div class="highlight-card">
+            <h3 class="section-title">Aprendizaje de oficio</h3>
+            <p>
+              Los compañeros aprenden recetas, manejo de hornos, higiene y
+              administración básica para que el día de mañana puedan trabajar en una panadería
+              o emprender su propio negocio.
+            </p>
+          </div>
+          <div class="highlight-card">
+            <h3 class="section-title">Trabajo en equipo</h3>
+            <p>
+              Hornear pan implica coordinar tiempos, roles y responsabilidad compartida.
+              Esto fortalece la comunicación y la convivencia dentro del grupo.
+            </p>
+          </div>
+          <div class="highlight-card">
+            <h3 class="section-title">Apoyo al centro</h3>
+            <p>
+              Parte de lo recaudado con la venta del pan se destina a sostener
+              los gastos del centro, alimentos, servicios, mantenimiento y dar rehabilitación gratuita a un ser humano.
+            </p>
+          </div>
+        </div>
+
+        <h3 class="section-title" style="font-size:22px;margin-top:10px;">
+          Visita nuestro centro
+        </h3>
+        <p class="section-sub">
+          Ven por tu pan calientito, conoce el taller y el trabajo que realizamos con los compañeros.
+        </p>
+
+        <div class="visit-grid">
+          <div class="map-card">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d471.67456741734344!2d-99.27836553409603!3d18.958086990003792!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cde7530861bf15%3A0x23e7ce71df84c16!2sDrogadictos%20An%C3%B3nimos%20A.C.%20Grupo%20Renacimiento!5e0!3m2!1ses!2smx!4v1763503848941!5m2!1ses!2smx"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="info-card">
+            <h3>Horario de atención</h3>
+            <dl>
+              <dt>Lunes a Domingo:</dt>
+              <dd>9:00 a.m. – 19:00 p.m.</dd>
+            </dl>
+
+            <h3 style="margin-top:14px;">Dirección</h3>
+            <p class="small">
+              Avenida Subida a Chalma #1605, Col. Del Bosque, Cuernavaca, Morelos.<br>
+              Teléfono:
+              <a href="tel:+527774588371">777 458 8371</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CATÁLOGO DE PAN ========== -->
+    <section id="catalogo" class="page-section">
+      <div class="section-inner">
+        <h2 class="section-title">Catálogo de pan</h2>
+        <p class="section-sub">
+          Elige tu pan favorito y contáctanos por WhatsApp para hacer tu pedido.
+          También puedes usar el botón <b>Cotizar</b> para llenar el formulario con ese producto.
+        </p>
+
+        <div class="catalog-grid">
+          <!-- Concha de vainilla -->
+          <article class="bread-card">
+            <div class="bread-top">
+              <span class="pill">Dulce</span>
+              <span class="bread-price">$10.00</span>
+            </div>
+            <img src="img/panes/pan001.jpg" alt="Concha de Vainilla" class="bread-img">
+            <h3>Concha de Vainilla</h3>
+            <div class="bread-code">Código: pan001</div>
+            <div class="bread-actions">
+              <a class="btn-whatsapp"
+                 href="https://wa.me/527774588371?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20Concha%20de%20Vainilla."
+                 target="_blank" rel="noopener">
+                Pedir por WhatsApp
+              </a>
+              <button class="btn-secondary" type="button"
+                      onclick="prepararCotizacion('Concha de Vainilla (pan001)')">
+                Cotizar
+              </button>
+            </div>
+          </article>
+
+          <!-- Concha de chocolate -->
+          <article class="bread-card">
+            <div class="bread-top">
+              <span class="pill">Dulce</span>
+              <span class="bread-price">$11.00</span>
+            </div>
+            <img src="img/panes/pan002.jpg" alt="Concha de Chocolate" class="bread-img">
+            <h3>Concha de Chocolate</h3>
+            <div class="bread-code">Código: pan002</div>
+            <div class="bread-actions">
+              <a class="btn-whatsapp"
+                 href="https://wa.me/527774588371?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20Concha%20de%20Chocolate."
+                 target="_blank" rel="noopener">
+                Pedir por WhatsApp
+              </a>
+              <button class="btn-secondary" type="button"
+                      onclick="prepararCotizacion('Concha de Chocolate (pan002)')">
+                Cotizar
+              </button>
+            </div>
+          </article>
+
+          <!-- Cuernito -->
+          <article class="bread-card">
+            <div class="bread-top">
+              <span class="pill">Hojaldre</span>
+              <span class="bread-price">$14.00</span>
+            </div>
+            <img src="img/panes/pan003.jpg" alt="Cuernito (Croissant)" class="bread-img">
+            <h3>Cuernito (Croissant)</h3>
+            <div class="bread-code">Código: pan003</div>
+            <div class="bread-actions">
+              <a class="btn-whatsapp"
+                 href="https://wa.me/527774588371?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20Cuernito%20(Croissant)."
+                 target="_blank" rel="noopener">
+                Pedir por WhatsApp
+              </a>
+              <button class="btn-secondary" type="button"
+                      onclick="prepararCotizacion('Cuernito (Croissant) (pan003)')">
+                Cotizar
+              </button>
+            </div>
+          </article>
+
+          <!-- Oreja -->
+          <article class="bread-card">
+            <div class="bread-top">
+              <span class="pill">Hojaldre</span>
+              <span class="bread-price">$9.00</span>
+            </div>
+            <img src="img/panes/pan004.jpg" alt="Oreja" class="bread-img">
+            <h3>Oreja</h3>
+            <div class="bread-code">Código: pan004</div>
+            <div class="bread-actions">
+              <a class="btn-whatsapp"
+                 href="https://wa.me/527774588371?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20Oreja."
+                 target="_blank" rel="noopener">
+                Pedir por WhatsApp
+              </a>
+              <button class="btn-secondary" type="button"
+                      onclick="prepararCotizacion('Oreja (pan004)')">
+                Cotizar
+              </button>
+            </div>
+          </article>
+
+          <!-- Dona glaseada -->
+          <article class="bread-card">
+            <div class="bread-top">
+              <span class="pill">Dulce</span>
+              <span class="bread-price">$12.00</span>
+            </div>
+            <img src="img/panes/pan005.jpg" alt="Dona Glaseada" class="bread-img">
+            <h3>Dona Glaseada</h3>
+            <div class="bread-code">Código: pan005</div>
+            <div class="bread-actions">
+              <a class="btn-whatsapp"
+                 href="https://wa.me/527774588371?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20Dona%20Glaseada."
+                 target="_blank" rel="noopener">
+                Pedir por WhatsApp
+              </a>
+              <button class="btn-secondary" type="button"
+                      onclick="prepararCotizacion('Dona Glaseada (pan005)')">
+                Cotizar
+              </button>
+            </div>
+          </article>
+
+          <!-- Pan de Elote -->
+          <article class="bread-card">
+            <div class="bread-top">
+              <span class="pill">Especialidad</span>
+              <span class="bread-price">$16.00</span>
+            </div>
+            <img src="img/panes/pan006.jpg" alt="Pan de Elote" class="bread-img">
+            <h3>Pan de Elote</h3>
+            <div class="bread-code">Código: pan006</div>
+            <div class="bread-actions">
+              <a class="btn-whatsapp"
+                 href="https://wa.me/527774588371?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20Pan%20de%20Elote."
+                 target="_blank" rel="noopener">
+                Pedir por WhatsApp
+              </a>
+              <button class="btn-secondary" type="button"
+                      onclick="prepararCotizacion('Pan de Elote (pan006)')">
+                Cotizar
+              </button>
+            </div>
+          </article>
+
+          <!-- Bolillo -->
+          <article class="bread-card">
+            <div class="bread-top">
+              <span class="pill">Salado</span>
+              <span class="bread-price">$4.00</span>
+            </div>
+            <img src="img/panes/pan007.jpg" alt="Bolillo" class="bread-img">
+            <h3>Bolillo</h3>
+            <div class="bread-code">Código: pan007</div>
+            <div class="bread-actions">
+              <a class="btn-whatsapp"
+                 href="https://wa.me/527774588371?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20Bolillo."
+                 target="_blank" rel="noopener">
+                Pedir por WhatsApp
+              </a>
+              <button class="btn-secondary" type="button"
+                      onclick="prepararCotizacion('Bolillo (pan007)')">
+                Cotizar
+              </button>
+            </div>
+          </article>
+
+          <!-- Bollo -->
+          <article class="bread-card">
+            <div class="bread-top">
+              <span class="pill">Salado</span>
+              <span class="bread-price">$5.00</span>
+            </div>
+            <img src="img/panes/pan008.jpg" alt="Bollo" class="bread-img">
+            <h3>Bollo</h3>
+            <div class="bread-code">Código: pan008</div>
+            <div class="bread-actions">
+              <a class="btn-whatsapp"
+                 href="https://wa.me/527774588371?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20Bollo."
+                 target="_blank" rel="noopener">
+                Pedir por WhatsApp
+              </a>
+              <button class="btn-secondary" type="button"
+                      onclick="prepararCotizacion('Bollo (pan008)')">
+                Cotizar
+              </button>
+            </div>
+          </article>
+
+          <!-- Pan de muerto -->
+          <article class="bread-card">
+            <div class="bread-top">
+              <span class="pill">Dulce y ajonjolí</span>
+              <span class="bread-price">$20.00</span>
+            </div>
+            <img src="img/panes/pan009.jpg" alt="Pan de muerto" class="bread-img">
+            <h3>Pan de muerto</h3>
+            <div class="bread-code">Código: pan009</div>
+            <div class="bread-actions">
+              <a class="btn-whatsapp"
+                 href="https://wa.me/527774588371?text=Hola,%20quiero%20hacer%20un%20pedido%20de%20Pan%20de%20muerto."
+                 target="_blank" rel="noopener">
+                Pedir por WhatsApp
+              </a>
+              <button class="btn-secondary" type="button"
+                      onclick="prepararCotizacion('Pan de muerto (pan009)')">
+                Cotizar
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CONTACTO / APOYO ========== -->
+    <section id="contacto" class="page-section">
+      <div class="section-inner">
+        <h2 class="section-title">Contacto y formas de apoyo</h2>
+        <p class="section-sub">
+          Si quieres hacer un pedido grande, donar insumos o apoyar al centro,
+          escríbenos desde este formulario o por WhatsApp. Gracias por ayudar a
+          que más personas tengan una oportunidad de recuperación.
+        </p>
+
+        <div class="contact-grid">
+          <div class="contact-text">
+            <h3>Otras formas de apoyar</h3>
+            <ul>
+              <li>Donando harina, azúcar, levadura u otros insumos.</li>
+              <li>Compartiendo el proyecto con amigos, escuelas o parroquias.</li>
+              <li>Invitándonos a vender pan en eventos o kermeses.</li>
+            </ul>
+            <p style="margin-top:10px;">
+              También puedes escribirnos directamente por WhatsApp al
+              <a href="https://wa.me/527774588371" target="_blank" rel="noopener">
+                777 458 8371
+              </a>.
+            </p>
+          </div>
+
+          <form id="formContacto" class="contact-form"
+                action="guardar_mensaje.php" method="POST">
+            <div class="field">
+              <label for="nombre">Nombre completo</label>
+              <input id="nombre" name="Nombre" type="text" required />
+            </div>
+            <div class="field">
+              <label for="email">Correo electrónico</label>
+              <input id="email" name="Email" type="email" required />
+            </div>
+            <div class="field">
+              <label for="telefono">Teléfono (opcional)</label>
+              <input id="telefono" name="Telefono" type="tel" />
+            </div>
+            <div class="field">
+              <label for="asunto">Asunto</label>
+              <input id="asunto" name="subject" type="text" />
+            </div>
+            <div class="field">
+              <label for="mensaje">Mensaje</label>
+              <textarea id="mensaje" name="Mensaje" required></textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">
+              Enviar mensaje
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    El Biscocho Sabroso © 2025 · "Grupo Renacimiento"<br>
+    Drogadictos Anónimos A.C. — Tel:
+    <a href="tel:+527774588371">777 458 8371</a>
+    &nbsp;·&nbsp;Correo electrónico:
+    <a href="mailto:renacimiento@drogadictosanonimos.org">
+      renacimiento@drogadictosanonimos.org
+    </a>
+  </footer>
+
+  <!-- ========== JS PARA NAVEGACIÓN Y COTIZACIÓN ========== -->
+  <script>
+    function cambiarSeccion(id){
+      document.querySelectorAll('.page-section').forEach(sec=>{
+        sec.classList.toggle('active-section', sec.id === id);
       });
-      writeOverride(id,vals); renderInventario(); renderCatalogo(); alert('Producto actualizado (local).');
-    };
-  });
-  body.querySelectorAll('button[data-act="del"]').forEach(b=>{
-    b.onclick=()=>{ const id=b.dataset.id; writeOverride(id,{stock:0}); renderInventario(); renderCatalogo(); };
-  });
-}
-$('#btnResetLocal').onclick=()=>{ if(confirm('¿Descartar TODOS los cambios locales?')){ localStorage.removeItem(OVK); overrides={}; productos=merge(productosBase,overrides); renderInventario(); renderCatalogo(); }};
-$('#btnExportJSON').onclick=()=>{ const blob=new Blob([JSON.stringify({productos},null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='productos.json'; a.click(); URL.revokeObjectURL(a.href); };
-$('#btnSalirInv').onclick=()=>{ sessionStorage.removeItem(AUTH_KEY); $('#vistaInventario').classList.add('hidden'); alert('Sesión cerrada.'); };
+      document.querySelectorAll('.nav-link').forEach(a=>{
+        a.classList.toggle('active', a.dataset.section === id);
+      });
+      const header = document.querySelector('.site-header');
+      const offset = header ? header.offsetHeight : 0;
+      const target = document.getElementById(id);
+      if(target){
+        const top = target.getBoundingClientRect().top + window.scrollY - offset - 8;
+        window.scrollTo({top, behavior:'smooth'});
+      }
+    }
 
-function openLogin(){ $('#loginModal').classList.remove('hidden'); $('#u').focus(); }
-function closeLogin(){ $('#loginModal').classList.add('hidden'); $('#u').value=''; $('#p').value=''; }
-$('#btnOpenInv').onclick = openLogin;
-$('#cancelLogin').onclick = closeLogin;
-$('#formLogin').onsubmit = (e)=>{ e.preventDefault(); const u=$('#u').value.trim(), p=$('#p').value.trim(); if(u==='admin'&&p==='1234'){ sessionStorage.setItem(AUTH_KEY,'1'); closeLogin(); openInventory(); } else alert('Credenciales incorrectas.'); };
-
-/* ===== Init ===== */
-(async function init(){ await loadProductos(); renderTicket(); })();
-</script>
-<script>
-document.getElementById('formContacto').addEventListener('submit', async (e) => {
-  e.preventDefault(); // No recargar la página
-
-  const form = e.target;
-  const datos = new FormData(form);
-
-  try {
-    const res = await fetch('guardar_mensaje.php', {
-      method: 'POST',
-      body: datos
+    document.querySelectorAll('.nav-link').forEach(a=>{
+      a.addEventListener('click', e=>{
+        e.preventDefault();
+        const id = a.dataset.section;
+        cambiarSeccion(id);
+      });
     });
 
-    const data = await res.json();
-
-    if (data.ok) {
-      alert('¡Mensaje enviado correctamente! 😊');
-      form.reset();
-    } else {
-      alert('Error al enviar el mensaje: ' + (data.error || 'Intenta de nuevo'));
+    // Rellena el formulario de contacto con el producto elegido y abre esa sección
+    function prepararCotizacion(producto){
+      cambiarSeccion('contacto');
+      const mensaje = document.getElementById('mensaje');
+      if(mensaje){
+        mensaje.value =
+          'Hola, me gustaría cotizar el siguiente producto de panadería: ' +
+          producto +
+          '.\n\nCantidad aproximada: \nFecha u ocasión: \nComentarios: ';
+        mensaje.focus();
+      }
+      const asunto = document.getElementById('asunto');
+      if(asunto && !asunto.value){
+        asunto.value = 'Cotización de pan: ' + producto;
+      }
     }
-  } catch (err) {
-    alert('Error de conexión con el servidor.');
-    console.error(err);
-  }
-});
-</script>
+  </script>
+</body>
+</html>
